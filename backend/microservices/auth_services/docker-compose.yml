@@ -1,0 +1,48 @@
+services:
+  postgresql-auth-service-db:
+    image: postgres:17-alpine3.20
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: auth-service-db
+    ports:
+      - "5432:5432"
+    networks:
+      - auth_service_network
+    volumes:
+      - ./pgdata/auth-service-db:/var/lib/postgresql/data
+    restart: always
+
+  postgresql-auth-service-db-test:
+    image: postgres:17-alpine3.20
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: auth-service-db-test
+    ports:
+      - "5431:5431"
+    volumes:
+      - ./postgresql-test/auth-service-db:/var/lib/postgresql/data
+    restart: always
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: password123
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - auth_service_network
+    restart: always
+    depends_on:
+      - postgresql-auth-service-db
+
+networks:
+  auth_service_network:
+    driver: bridge
+
+volumes:
+  pgadmin_data:
