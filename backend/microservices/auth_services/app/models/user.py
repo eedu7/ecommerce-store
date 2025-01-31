@@ -7,8 +7,8 @@ from sqlalchemy.orm import Mapped, mapped_column
 from core.database import Base
 
 
-class User:
-    __tablename = "user"
+class User(Base):
+    __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     uuid: Mapped[UUID] = mapped_column(
@@ -16,7 +16,7 @@ class User:
     )
     email: Mapped[str] = mapped_column(Unicode(255), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(Unicode(255), nullable=False)
-    usernmae: Mapped[str] = mapped_column(Unicode(255), nullable=False, unique=True)
+    username: Mapped[str] = mapped_column(Unicode(255), nullable=False, unique=True)
     profile_image_url: Mapped[str] = mapped_column(Unicode(255), nullable=True)
     phone_number: Mapped[str] = mapped_column(Unicode(255), nullable=True)
 
