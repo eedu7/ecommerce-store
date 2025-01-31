@@ -6,7 +6,7 @@ from core.database.session import (reset_session_context, session,
                                    set_session_context)
 
 
-class SQLAlchemySession:
+class SQLAlchemyMiddleware:
     def __init__(self, app: ASGIApp) -> None:
         self.app = app
 

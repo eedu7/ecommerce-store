@@ -1,3 +1,3 @@
-from .sqlalchemy import SQLAlchemySession
+from .sqlalchemy import SQLAlchemyMiddleware
 
-__all__ = ["SQLAlchemySession"]
+__all__ = ["SQLAlchemyMiddleware"]
