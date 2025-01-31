@@ -1,3 +1,4 @@
 from .authentication import AuthenticationRequired
+from .logging import Logging
 
-__all__ = ["AuthenticationRequired"]
+__all__ = ["AuthenticationRequired", "Logging"]
