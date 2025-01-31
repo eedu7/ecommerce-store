@@ -1,4 +1,3 @@
-from http import HTTPStatus
 from typing import List
 
 from fastapi import Depends, FastAPI, Request
@@ -8,20 +7,22 @@ from fastapi.responses import JSONResponse
 
 from api import router
 from core.exceptions import CustomException
+from core.fastapi.dependencies import Logging
 from core.fastapi.middlewares import (AuthBackend, AuthenticationMiddleware,
                                       ResponseLoggerMiddleware,
                                       SQLAlchemyMiddleware)
 
 
 def on_auth_error(request: Request, exc: Exception):
-    status_code, error_code, message = HTTPStatus.UNAUTHORIZED, None, str(exc)
+    status_code, error_code, message = 401, None, str(exc)
     if isinstance(exc, CustomException):
         status_code = int(exc.code)
         error_code = exc.error_code
         message = exc.message
 
     return JSONResponse(
-        status_code=status_code, content={"error_code": error_code, "message": message}
+        status_code=status_code,
+        content={"error_code": error_code, "message": message},
     )
 
 
@@ -47,18 +48,23 @@ def make_middleware() -> List[Middleware]:
             allow_methods=["*"],
             allow_headers=["*"],
         ),
-        Middleware(AuthenticationMiddleware, backend=AuthBackend()),
-        Middleware(ResponseLoggerMiddleware),
+        Middleware(
+            AuthenticationMiddleware,
+            backend=AuthBackend(),
+            on_error=on_auth_error,
+        ),
         Middleware(SQLAlchemyMiddleware),
+        Middleware(ResponseLoggerMiddleware),
     ]
     return middleware
 
 
 def create_app() -> FastAPI:
     app_ = FastAPI(
-        title="Auth Service",
-        description="The auth service of the e-commerce store",
-        version="1.0.1",
+        title="FastAPI Boilerplate",
+        description="FastAPI Boilerplate by @iam-abbas",
+        version="1.0.0",
+        dependencies=[Depends(Logging)],
         middleware=make_middleware(),
     )
     init_routers(app_=app_)
