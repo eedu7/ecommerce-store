@@ -61,8 +61,8 @@ def make_middleware() -> List[Middleware]:
 
 def create_app() -> FastAPI:
     app_ = FastAPI(
-        title="FastAPI Boilerplate",
-        description="FastAPI Boilerplate by @iam-abbas",
+        title="Auth Service",
+        description="Authentication based service, for ecommerce platform",
         version="1.0.0",
         dependencies=[Depends(Logging)],
         middleware=make_middleware(),

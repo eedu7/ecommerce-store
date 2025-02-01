@@ -43,12 +43,12 @@ async def logout():
     return api_response("Invalidate tokens and log the user out.")
 
 
-@router.post("change-password")
+@router.post("/change-password")
 async def change_password():
     return api_response("Allow users to change their password.")
 
 
-@router.post("forgot-password")
+@router.post("/forgot-password")
 async def forgot_password():
     return api_response("Initiate password reset process.")
 
