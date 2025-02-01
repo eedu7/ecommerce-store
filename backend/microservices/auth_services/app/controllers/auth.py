@@ -42,7 +42,7 @@ class AuthController(BaseController[User]):
         user = await self.user_repository.get_by_email(email)
 
         if not user:
-            raise BadRequestException("Invalid credentials")
+            raise BadRequestException("No user found")
 
         if not PasswordHandler.verify(user.password, password):
             raise BadRequestException("Invalid credentials")
