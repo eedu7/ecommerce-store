@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends
 
-from api.v1.auth.auth import api_response
 from app.controllers import UserController
 from app.models.user import User
 from app.schemas.responses.users import UserResponse
 from core.factory import Factory
 from core.fastapi.dependencies import AuthenticationRequired
 from core.fastapi.dependencies.current_user import get_current_user
+from core.utils import api_response
 
 router = APIRouter()
 

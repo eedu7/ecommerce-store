@@ -6,6 +6,7 @@ from app.schemas.extras.token import Token
 from app.schemas.requests.users import LoginUserRequest, RegisterUserRequest
 from app.schemas.responses.users import UserResponse
 from core.factory import Factory
+from core.utils import api_response
 
 router = APIRouter()
 
@@ -29,12 +30,6 @@ async def login_user(
 ) -> Token:
     return await auth_controller.login(
         email=login_user_request.email, password=login_user_request.password
-    )
-
-
-def api_response(title):
-    return JSONResponse(
-        status_code=200, content={"message": "ok", "title": "Refresh token"}
     )
 
 
