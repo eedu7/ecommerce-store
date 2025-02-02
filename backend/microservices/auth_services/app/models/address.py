@@ -3,7 +3,6 @@ from uuid import uuid4
 from sqlalchemy import UUID, BigInteger, Enum, ForeignKey, Unicode
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.models import User
 from app.schemas.enums import AddressType
 from core.database import Base
 from core.database.mixins import TimeStampMixin, UserAuditMixin
@@ -18,7 +17,7 @@ class Address(Base, TimeStampMixin, UserAuditMixin):
     )
 
     user_uuid: Mapped[UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey(User.uuid), nullable=False
+        UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False
     )
     street_address: Mapped[str] = mapped_column(Unicode(255), nullable=False)
     city: Mapped[str] = mapped_column(Unicode(100), nullable=False)
