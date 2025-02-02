@@ -1,9 +1,11 @@
+from datetime import date
 from uuid import uuid4
 
-from sqlalchemy import BigInteger, Boolean, Unicode
+from sqlalchemy import BigInteger, Date, Enum, Unicode
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
+from app.schemas.enums import GenderEnum
 from core.database import Base
 
 
@@ -19,6 +21,10 @@ class User(Base):
     username: Mapped[str] = mapped_column(Unicode(255), nullable=False, unique=True)
     profile_image_url: Mapped[str] = mapped_column(Unicode(255), nullable=True)
     phone_number: Mapped[str] = mapped_column(Unicode(255), nullable=True)
+    first_name: Mapped[str] = mapped_column(Unicode(255), nullable=True)
+    last_name: Mapped[str] = mapped_column(Unicode(255), nullable=True)
+    date_of_birth: Mapped[date] = mapped_column(Date, nullable=True)
+    gender: Mapped[GenderEnum] = mapped_column(Enum(GenderEnum), nullable=True)
 
     def __repr__(self):
         return f"User(id={self.id}, uuid={self.uuid}, username={self.username}, email={self.email})"

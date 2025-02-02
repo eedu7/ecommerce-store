@@ -1,8 +1,8 @@
-"""Initial migration added the user
+"""Initial Migration
 
-Revision ID: 65af6f68ab1e
+Revision ID: c2391e6619a9
 Revises:
-Create Date: 2025-01-31 19:04:05.181892
+Create Date: 2025-02-02 10:37:32.419443
 
 """
 
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "65af6f68ab1e"
+revision: str = "c2391e6619a9"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -29,6 +29,14 @@ def upgrade() -> None:
         sa.Column("username", sa.Unicode(length=255), nullable=False),
         sa.Column("profile_image_url", sa.Unicode(length=255), nullable=True),
         sa.Column("phone_number", sa.Unicode(length=255), nullable=True),
+        sa.Column("first_name", sa.Unicode(length=255), nullable=True),
+        sa.Column("last_name", sa.Unicode(length=255), nullable=True),
+        sa.Column("date_of_birth", sa.Date(), nullable=True),
+        sa.Column(
+            "gender",
+            sa.Enum("MALE", "FEMALE", "OTHER", name="genderenum"),
+            nullable=True,
+        ),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("email"),
         sa.UniqueConstraint("username"),
