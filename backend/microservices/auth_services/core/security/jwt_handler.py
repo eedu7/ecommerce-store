@@ -39,7 +39,7 @@ class JWTHandler:
                 algorithms=[JWTHandler.algorithm],
             )
         except ExpiredSignatureError:
-            raise JWTExpiredError()
+            raise JWTExpiredError("Token has expired")
         except JWTError as e:
             raise JWTDecodeError() from e
 

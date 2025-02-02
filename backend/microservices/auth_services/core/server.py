@@ -30,13 +30,25 @@ def init_routers(app_: FastAPI) -> None:
     app_.include_router(router)
 
 
+# TODO: Why this is not working
+async def custom_exception_handler(request: Request, exc: CustomException):
+    return JSONResponse(
+        status_code=exc.code,
+        content={"error_code": exc.error_code, "message": exc.message},
+    )
+
+
+# TODO: Fix the error code
+async def global_custom_exception(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={"error_code": 500, "message": str(exc)},
+    )
+
+
 def init_listeners(app_: FastAPI) -> None:
-    @app_.exception_handler(CustomException)
-    async def custom_exception_handler(request: Request, exc: CustomException):
-        return JSONResponse(
-            status_code=exc.code,
-            content={"error_code": exc.error_code, "message": exc.message},
-        )
+    app_.add_exception_handler(CustomException, custom_exception_handler)
+    app_.add_exception_handler(Exception, global_custom_exception)
 
 
 def make_middleware() -> List[Middleware]:
