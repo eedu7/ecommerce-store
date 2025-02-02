@@ -15,7 +15,10 @@ class User(Base, TimeStampMixin, UserAuditMixin):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     uuid: Mapped[UUID] = mapped_column(
-        UUID(as_uuid=True), default=uuid4, unique=True, nullable=False
+        UUID(as_uuid=True),
+        default=uuid4,
+        unique=True,
+        nullable=False,
     )
     email: Mapped[str] = mapped_column(Unicode(320), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(Unicode(128), nullable=False)
@@ -30,7 +33,7 @@ class User(Base, TimeStampMixin, UserAuditMixin):
     )
 
     def __repr__(self):
-        return f"User(id={self.id}, uuid={self.uuid}, username={self.username}, email={self.email})"
+        return f"uuid={self.uuid}, username={self.username}, email={self.email})"
 
     def __str__(self):
         return self.__repr__()
