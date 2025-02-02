@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import Mapped, mapped_column
 
 
-class TimestampMixin:
+class TimeStampMixin:
     """Mixin class to add created_at, updated_ay, deleted_at timestamp to models."""
 
     @declared_attr
