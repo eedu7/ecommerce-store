@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import EmailStr
 
 from app.models import User
@@ -35,6 +37,7 @@ class AuthController(BaseController[User]):
                 "email": email,
                 "password": password,
                 "username": username,
+                "last_login_at": datetime.now(),
             }
         )
 

@@ -31,7 +31,7 @@ class User(Base, TimeStampMixin, UserAuditMixin):
     gender: Mapped[GenderEnum] = mapped_column(
         Enum(GenderEnum, create_type=False), nullable=True
     )
-    last_login_at: Mapped[DateTime] = mapped_column(DateTime, default=False)
+    last_login_at: Mapped[DateTime] = mapped_column(DateTime)
 
     def __repr__(self):
         return f"uuid={self.uuid}, username={self.username}, email={self.email})"

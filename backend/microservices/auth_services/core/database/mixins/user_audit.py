@@ -7,11 +7,11 @@ class UserAuditMixin:
 
     @declared_attr
     def created_by(cls) -> Mapped[BigInteger]:
-        return mapped_column(BigInteger, ForeignKey("users.id"))
+        return mapped_column(BigInteger, ForeignKey("users.id"), nullable=True)
 
     @declared_attr
     def updated_by(cls) -> Mapped[BigInteger]:
-        return mapped_column(BigInteger, ForeignKey("users.id"))
+        return mapped_column(BigInteger, ForeignKey("users.id"), nullable=True)
 
     @declared_attr
     def deleted_by(cls) -> Mapped[BigInteger | None]:
