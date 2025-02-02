@@ -1,7 +1,7 @@
 from datetime import date
 from uuid import uuid4
 
-from sqlalchemy import BigInteger, Date, Enum, Unicode
+from sqlalchemy import BigInteger, Date, DateTime, Enum, Unicode
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -31,6 +31,7 @@ class User(Base, TimeStampMixin, UserAuditMixin):
     gender: Mapped[GenderEnum] = mapped_column(
         Enum(GenderEnum, create_type=False), nullable=True
     )
+    last_login_at: Mapped[DateTime] = mapped_column(DateTime, default=False)
 
     def __repr__(self):
         return f"uuid={self.uuid}, username={self.username}, email={self.email})"
