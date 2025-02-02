@@ -30,7 +30,14 @@ def init_routers(app_: FastAPI) -> None:
     app_.include_router(router)
 
 
-# TODO: Why this is not working
+"""
+    TODO: Custom Exception
+        This exception should be used to handle custom exceptions like
+        `CustomException` and `BadRequestException` globally.
+        The one made in the core/exceptions/base.py file.
+"""
+
+
 async def custom_exception_handler(request: Request, exc: CustomException):
     return JSONResponse(
         status_code=exc.code,
@@ -38,8 +45,12 @@ async def custom_exception_handler(request: Request, exc: CustomException):
     )
 
 
-# TODO: Fix the error code
 async def global_custom_exception(request: Request, exc: Exception):
+    if exc.code:
+        return JSONResponse(
+            status_code=exc.code,
+            content={"error_code": exc.code, "message": str(exc)},
+        )
     return JSONResponse(
         status_code=500,
         content={"error_code": 500, "message": str(exc)},
