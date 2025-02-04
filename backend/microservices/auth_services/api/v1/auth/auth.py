@@ -29,10 +29,11 @@ async def login_user(
     auth_controller: AuthController = Depends(Factory().get_auth_controller),
     user_controller: AuthController = Depends(Factory().get_user_controller),
 ) -> Token:
-    await user_controller.update_last_login(email=login_user_request.email)
-    return await auth_controller.login(
+    jwt_token = await auth_controller.login(
         email=login_user_request.email, password=login_user_request.password
     )
+    await user_controller.update_last_login(email=login_user_request.email)
+    return jwt_token
 
 
 @router.post("/refresh-token")
