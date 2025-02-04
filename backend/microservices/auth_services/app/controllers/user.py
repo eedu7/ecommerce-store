@@ -1,6 +1,7 @@
 from app.models import User
 from app.repositories import UserRepository
 from core.controller import BaseController
+from core.database import Propagation, Transactional
 
 
 class UserController(BaseController[User]):
@@ -13,3 +14,9 @@ class UserController(BaseController[User]):
 
     async def get_by_email(self, email: str) -> User:
         return await self.user_repository.get_by_email(email)
+
+    @Transactional(propagation=Propagation.REQUIRED)
+    async def update_last_login(self, email: str) -> None:
+        user = await self.get_by_email(email)
+        if user:
+            await self.user_repository.update_last_login(user)
