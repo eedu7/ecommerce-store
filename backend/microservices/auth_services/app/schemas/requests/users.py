@@ -8,6 +8,10 @@ from pydantic_extra_types.phone_numbers import PhoneNumber
 from app.schemas.enums import GenderType
 
 
+class LoginUserRequest(BaseModel):
+    email: EmailStr = Field(..., examples=["john.doe@example.com"])
+    password: str = Field(..., min_length=8, max_length=64, examples=["Password@123"])
+
 class RegisterUserRequest(BaseModel):
     email: EmailStr = Field(..., examples=["john.doe@example.com"])
     password: str = Field(..., min_length=8, max_length=64, examples=["Password@123"])
@@ -44,9 +48,7 @@ class RegisterUserRequest(BaseModel):
         return v
 
 
-class LoginUserRequest(BaseModel):
-    email: EmailStr
-    password: str
+
 
 
 class EditUserRequest(BaseModel):
