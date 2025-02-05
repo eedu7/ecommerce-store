@@ -1,17 +1,18 @@
 from fastapi import APIRouter, Depends
 
-from app.controllers import UserController
+from app.controllers import AuthController, UserController
 from app.models.user import User
+from app.schemas.requests.users import EditUserRequest
 from app.schemas.responses.users import UserResponse
 from core.factory import Factory
 from core.fastapi.dependencies import AuthenticationRequired
 from core.fastapi.dependencies.current_user import get_current_user
 from core.utils import api_response
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(AuthenticationRequired)])
 
 
-@router.get("/", dependencies=[Depends(AuthenticationRequired)])
+@router.get("/")
 async def get_users(
     user_controller: UserController = Depends(Factory().get_user_controller),
 ) -> list[UserResponse]:
@@ -19,15 +20,20 @@ async def get_users(
     return users
 
 
-@router.get("/me", dependencies=[Depends(AuthenticationRequired)])
+@router.get("/me")
 def get_user(
     user: User = Depends(get_current_user),
 ) -> UserResponse:
     return user
 
 
-@router.put("/{id}/update")
-async def update_user_profile(id: str):
+@router.put("/{uuid}/update")
+async def update_user_profile(
+    uuid: str,
+    user_data: EditUserRequest,
+    user_controller: UserController = Depends(Factory().get_user_controller),
+    auth_controller: AuthController = Depends(Factory().get_auth_controller),
+):
     return api_response("Update user profile details")
 
 

@@ -3,8 +3,9 @@
 import re
 
 from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic_extra_types.phone_numbers import PhoneNumber
 
-from app.schemas.enums import GenderEnum
+from app.schemas.enums import GenderType
 
 
 class RegisterUserRequest(BaseModel):
@@ -49,9 +50,15 @@ class LoginUserRequest(BaseModel):
 
 
 class EditUserRequest(BaseModel):
-    username: str
-    profile_image_url: str
-    phone_number: str
-    first_name: str
-    last_name: str
-    gender: str
+    username: str | None = Field(
+        None, min_length=3, max_length=64, examples=["JohnDoe"]
+    )
+    phone_number: PhoneNumber | None = Field(
+        None, min_length=10, max_length=20, examples=["+1234567890"]
+    )
+    first_name: str | None = Field(None, min_length=1, max_length=50, examples=["John"])
+    last_name: str | None = Field(None, min_length=1, max_length=50, examples=["Doe"])
+    gender: GenderType = Field(
+        GenderType.OTHER,
+        examples=[GenderType.FEMALE, GenderType.MALE, GenderType.OTHER],
+    )
