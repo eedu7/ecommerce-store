@@ -54,3 +54,17 @@ class UserRepository(BaseRepository[User]):
         """
         user.last_login_at = datetime.utcnow()
         self.session.add(user)
+
+    async def update_user(self, user: User, **kwargs) -> User:
+        """
+        Update user details.
+
+        :param user: User instance.
+        :param kwargs: User details.
+        :return: User.
+        """
+        for key, value in kwargs.items():
+            setattr(user, key, value)
+
+        self.session.add(user)
+        return user

@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends
 
 from app.controllers import AuthController, UserController
@@ -29,12 +31,13 @@ def get_user(
 
 @router.put("/{uuid}/update")
 async def update_user_profile(
-    uuid: str,
+    uuid: UUID,
     user_data: EditUserRequest,
     user_controller: UserController = Depends(Factory().get_user_controller),
-    auth_controller: AuthController = Depends(Factory().get_auth_controller),
 ):
-    return api_response("Update user profile details")
+    user = await user_controller.get_by_uuid(uuid)
+    updated_user = await user_controller.update_user(user, **user_data.model_dump())
+    return updated_user
 
 
 @router.delete("/{id}")

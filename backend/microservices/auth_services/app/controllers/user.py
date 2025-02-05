@@ -20,3 +20,7 @@ class UserController(BaseController[User]):
         user = await self.get_by_email(email)
         if user:
             await self.user_repository.update_last_login(user)
+
+    @Transactional(propagation=Propagation.REQUIRED)
+    async def update_user(self, user: User, **kwargs) -> User:
+        return await self.user_repository.update_user(user, **kwargs)
