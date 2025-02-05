@@ -47,6 +47,7 @@ async def custom_exception_handler(request: Request, exc: CustomException):
 
 async def global_custom_exception(request: Request, exc: Exception):
     from icecream import ic
+
     ic(exc)
     if exc.code:
         return JSONResponse(

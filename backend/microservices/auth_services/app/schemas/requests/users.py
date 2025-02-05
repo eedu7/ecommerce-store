@@ -12,6 +12,7 @@ class LoginUserRequest(BaseModel):
     email: EmailStr = Field(..., examples=["john.doe@example.com"])
     password: str = Field(..., min_length=8, max_length=64, examples=["Password@123"])
 
+
 class RegisterUserRequest(BaseModel):
     email: EmailStr = Field(..., examples=["john.doe@example.com"])
     password: str = Field(..., min_length=8, max_length=64, examples=["Password@123"])
@@ -46,9 +47,6 @@ class RegisterUserRequest(BaseModel):
         if re.search(r"[^a-zA-Z0-9]", v):
             raise ValueError("Username must not contain special characters")
         return v
-
-
-
 
 
 class EditUserRequest(BaseModel):
