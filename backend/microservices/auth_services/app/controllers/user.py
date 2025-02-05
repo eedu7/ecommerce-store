@@ -1,4 +1,6 @@
 from datetime import datetime
+from typing import Any, Dict
+from uuid import UUID
 
 from app.models import User
 from app.repositories import UserRepository
@@ -24,3 +26,18 @@ class UserController(BaseController[User]):
             await self.user_repository.update_user(
                 user, {"last_login_at": datetime.utcnow()}
             )
+
+    @Transactional(propagation=Propagation.REQUIRED)
+    async def update_user(self, user_uuid: UUID, data: Dict[str, Any]) -> bool:
+        user = await self.get_by_uuid(user_uuid)
+        if user:
+            await self.user_repository.update_user(
+                user,
+                {
+                    **data,
+                    "updated_by": user.id,
+                    "updated_at": datetime.utcnow(),
+                },
+            )
+            return True
+        return False

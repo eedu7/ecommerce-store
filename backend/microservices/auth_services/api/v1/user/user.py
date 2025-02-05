@@ -1,11 +1,13 @@
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
 
-from app.controllers import AuthController, UserController
+from app.controllers import UserController
 from app.models.user import User
 from app.schemas.requests.users import EditUserRequest
 from app.schemas.responses.users import UserResponse
+from core.exceptions import BadRequestException
 from core.factory import Factory
 from core.fastapi.dependencies import AuthenticationRequired
 from core.fastapi.dependencies.current_user import get_current_user
@@ -35,9 +37,11 @@ async def update_user_profile(
     user_data: EditUserRequest,
     user_controller: UserController = Depends(Factory().get_user_controller),
 ):
-    user = await user_controller.get_by_uuid(uuid)
-    updated_user = await user_controller.update_user(user, **user_data.model_dump())
-    return updated_user
+    data = user_data.model_dump()
+    updated = await user_controller.update_user(uuid, data)
+    if updated:
+        raise JSONResponse(status_code=200, content={"message": "User profile updated"})
+    raise BadRequestException("Error updating user profile")
 
 
 @router.delete("/{id}")

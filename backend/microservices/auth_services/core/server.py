@@ -49,15 +49,17 @@ async def global_custom_exception(request: Request, exc: Exception):
     from icecream import ic
 
     ic(exc)
-    if exc.code:
+    try:
+        if exc.code:
+            return JSONResponse(
+                status_code=exc.code,
+                content={"error_code": exc.code, "message": str(exc)},
+            )
+    except Exception:
         return JSONResponse(
-            status_code=exc.code,
-            content={"error_code": exc.code, "message": str(exc)},
+            status_code=500,
+            content={"error_code": 500, "message": str(exc)},
         )
-    return JSONResponse(
-        status_code=500,
-        content={"error_code": 500, "message": str(exc)},
-    )
 
 
 def init_listeners(app_: FastAPI) -> None:
