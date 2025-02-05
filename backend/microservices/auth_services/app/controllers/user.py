@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from app.models import User
 from app.repositories import UserRepository
 from core.controller import BaseController
@@ -19,8 +21,6 @@ class UserController(BaseController[User]):
     async def update_last_login(self, email: str) -> None:
         user = await self.get_by_email(email)
         if user:
-            await self.user_repository.update_last_login(user)
-
-    @Transactional(propagation=Propagation.REQUIRED)
-    async def update_user(self, user: User, **kwargs) -> User:
-        return await self.user_repository.update_user(user, **kwargs)
+            await self.user_repository.update_user(
+                user, {"last_login_at": datetime.utcnow()}
+            )

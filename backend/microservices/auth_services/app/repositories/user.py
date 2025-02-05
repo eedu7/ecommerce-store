@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any, Dict
 
 from app.models import User
 from core.repository import BaseRepository
@@ -55,7 +56,7 @@ class UserRepository(BaseRepository[User]):
         user.last_login_at = datetime.utcnow()
         self.session.add(user)
 
-    async def update_user(self, user: User, **kwargs) -> User:
+    async def update_user(self, user: User, attributes: Dict[str, Any]) -> User:
         """
         Update user details.
 
@@ -63,8 +64,7 @@ class UserRepository(BaseRepository[User]):
         :param kwargs: User details.
         :return: User.
         """
-        for key, value in kwargs.items():
-            setattr(user, key, value)
-
+        for field, value in attributes.items():
+            if hasattr(user, field):
+                setattr(user, field, value)
         self.session.add(user)
-        return user
