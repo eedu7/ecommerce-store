@@ -1,4 +1,4 @@
 from .address import AddressType
-from .gender import GenderEnum
+from .gender import GenderType
 
-__all__ = ["GenderEnum", "AddressType"]
+__all__ = ["GenderType", "AddressType"]

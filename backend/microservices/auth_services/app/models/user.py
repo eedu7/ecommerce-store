@@ -5,7 +5,7 @@ from sqlalchemy import BigInteger, Date, DateTime, Enum, Unicode
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.schemas.enums import GenderEnum
+from app.schemas.enums import GenderType
 from core.database import Base
 from core.database.mixins import TimeStampMixin, UserAuditMixin
 
@@ -28,8 +28,8 @@ class User(Base, TimeStampMixin, UserAuditMixin):
     first_name: Mapped[str] = mapped_column(Unicode(50), nullable=True)
     last_name: Mapped[str] = mapped_column(Unicode(50), nullable=True)
     date_of_birth: Mapped[date] = mapped_column(Date, nullable=True)
-    gender: Mapped[GenderEnum] = mapped_column(
-        Enum(GenderEnum, create_type=False), nullable=True
+    gender: Mapped[GenderType] = mapped_column(
+        Enum(GenderType, create_type=False), nullable=True
     )
     last_login_at: Mapped[DateTime] = mapped_column(DateTime)
 

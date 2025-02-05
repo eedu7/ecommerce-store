@@ -4,6 +4,8 @@ import re
 
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
+from app.schemas.enums import GenderEnum
+
 
 class RegisterUserRequest(BaseModel):
     email: EmailStr = Field(..., examples=["john.doe@example.com"])
@@ -44,3 +46,12 @@ class RegisterUserRequest(BaseModel):
 class LoginUserRequest(BaseModel):
     email: EmailStr
     password: str
+
+
+class EditUserRequest(BaseModel):
+    username: str
+    profile_image_url: str
+    phone_number: str
+    first_name: str
+    last_name: str
+    gender: str
