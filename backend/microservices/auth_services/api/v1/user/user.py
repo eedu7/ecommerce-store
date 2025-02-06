@@ -1,9 +1,10 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, UploadFile
 from fastapi.responses import JSONResponse
 
 from app.controllers import UserController
+from app.integrations import S3ImageManager
 from app.models.user import User
 from app.schemas.requests.users import EditUserRequest
 from app.schemas.responses.users import UserResponse
@@ -29,6 +30,29 @@ def get_user(
     user: User = Depends(get_current_user),
 ) -> UserResponse:
     return user
+
+
+@router.post("/{uuid}/upload-profile-image")
+async def upload_profile_image(
+    uuid: UUID,
+    file: UploadFile = File(...),
+    user_controller: UserController = Depends(Factory().get_user_controller),
+):
+    file_name = S3ImageManager.construct_url(file.filename)
+
+    # Uploading the image
+    await S3ImageManager.upload_image(file, file_name)
+
+    await user_controller.update_profile_image(uuid, file_name)
+
+    return JSONResponse(
+        status_code=200,
+        content={
+            "message": "ok",
+            "detail": "Image uploaded successfully",
+            "file_name": file_name,
+        },
+    )
 
 
 @router.put("/{uuid}/update")
