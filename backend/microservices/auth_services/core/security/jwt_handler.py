@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from http import HTTPStatus
 
 from jose import ExpiredSignatureError, JWTError, jwt
@@ -39,7 +39,7 @@ class JWTHandler:
                 algorithms=[JWTHandler.algorithm],
             )
         except ExpiredSignatureError:
-            raise JWTExpiredError()
+            raise JWTExpiredError("Token has expired")
         except JWTError as e:
             raise JWTDecodeError() from e
 

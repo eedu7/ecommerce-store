@@ -1,7 +1,7 @@
 from enum import StrEnum
 
 
-class GenderEnum(StrEnum):
+class GenderType(StrEnum):
     MALE = "male"
     FEMALE = "female"
     OTHER = "other"

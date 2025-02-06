@@ -894,6 +894,17 @@ build-docs = ["cloud-sptheme (>=1.10.1)", "sphinx (>=1.6)", "sphinxcontrib-fullt
 totp = ["cryptography"]
 
 [[package]]
+name = "phonenumbers"
+version = "8.13.54"
+description = "Python version of Google's common library for parsing, formatting, storing and validating international phone numbers."
+optional = false
+python-versions = "*"
+files = [
+    {file = "phonenumbers-8.13.54-py2.py3-none-any.whl", hash = "sha256:97624ada7260daafd09538baa6574b14cb9151cf29c5b22d9278abd050957edf"},
+    {file = "phonenumbers-8.13.54.tar.gz", hash = "sha256:4c32e3c941b24e5ce28d2211f624f0fef08462781e3d7e5e85192275cfd6c680"},
+]
+
+[[package]]
 name = "pyasn1"
 version = "0.6.1"
 description = "Pure-Python implementation of ASN.1 types and DER/BER/CER codecs (X.208)"
@@ -1776,4 +1787,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "4fe2bad32195e5f8b4947676bafd59ca235b216923eb3394f00876731884f95e"
+content-hash = "c228ae1091a68b653e90d255fca94408e6052c1495ef2e95ce3c5be6ec06f333"

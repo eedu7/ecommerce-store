@@ -30,13 +30,41 @@ def init_routers(app_: FastAPI) -> None:
     app_.include_router(router)
 
 
-def init_listeners(app_: FastAPI) -> None:
-    @app_.exception_handler(CustomException)
-    async def custom_exception_handler(request: Request, exc: CustomException):
+"""
+    TODO: Custom Exception
+        This exception should be used to handle custom exceptions like
+        `CustomException` and `BadRequestException` globally.
+        The one made in the core/exceptions/base.py file.
+"""
+
+
+async def custom_exception_handler(request: Request, exc: CustomException):
+    return JSONResponse(
+        status_code=exc.code,
+        content={"error_code": exc.error_code, "message": exc.message},
+    )
+
+
+async def global_custom_exception(request: Request, exc: Exception):
+    from icecream import ic
+
+    ic(exc)
+    try:
+        if exc.code:
+            return JSONResponse(
+                status_code=exc.code,
+                content={"error_code": exc.code, "message": str(exc)},
+            )
+    except Exception:
         return JSONResponse(
-            status_code=exc.code,
-            content={"error_code": exc.error_code, "message": exc.message},
+            status_code=500,
+            content={"error_code": 500, "message": str(exc)},
         )
+
+
+def init_listeners(app_: FastAPI) -> None:
+    app_.add_exception_handler(CustomException, custom_exception_handler)
+    app_.add_exception_handler(Exception, global_custom_exception)
 
 
 def make_middleware() -> List[Middleware]:
