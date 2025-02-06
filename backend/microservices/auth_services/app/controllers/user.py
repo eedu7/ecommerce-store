@@ -41,3 +41,17 @@ class UserController(BaseController[User]):
             )
             return True
         return False
+
+    @Transactional(propagation=Propagation.REQUIRED)
+    async def update_profile_image(self, user_uuid: UUID, image_url: str) -> bool:
+        user = await self.get_by_uuid(user_uuid)
+        if user:
+            await self.user_repository.update_user(
+                user,
+                {
+                    "profile_image_url": image_url,
+                    "updated_by": user.id,
+                },
+            )
+            return True
+        return False
