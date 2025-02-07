@@ -6,6 +6,7 @@ from app.models import User
 from app.repositories import UserRepository
 from core.controller import BaseController
 from core.database import Propagation, Transactional
+from core.exceptions import NotFoundException
 
 
 class UserController(BaseController[User]):
@@ -55,3 +56,13 @@ class UserController(BaseController[User]):
             )
             return True
         return False
+
+    @Transactional(propagation=Propagation.REQUIRED)
+    async def delete_user(self, user_uuid: UUID) -> bool:
+        user = await self.get_by_uuid(user_uuid)
+        if not user:
+            raise NotFoundException("User not found")
+        await self.user_repository.update_user(
+            user, {"deleted_at": datetime.utcnow(), "deleted_by": user.id}
+        )
+        return True
