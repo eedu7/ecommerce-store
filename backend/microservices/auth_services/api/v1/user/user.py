@@ -68,9 +68,14 @@ async def update_user_profile(
     raise BadRequestException("Error updating user profile")
 
 
-@router.delete("/{id}")
-async def delete_user(id: str):
-    return api_response("Delete user account (Soft/Hard delete)")
+@router.delete("/{uuid}")
+async def delete_user(
+    uuid: UUID, user_controller: UserController = Depends(Factory().get_user_controller)
+):
+    deleted = await user_controller.delete_user(uuid)
+    if deleted:
+        return JSONResponse(status_code=200, content={"message": "User deleted"})
+    raise BadRequestException("Error deleting user")
 
 
 @router.post("/{id}/deactivate")
