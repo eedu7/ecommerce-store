@@ -21,7 +21,7 @@ router = APIRouter(dependencies=[Depends(AuthenticationRequired)])
 async def get_users(
     user_controller: UserController = Depends(Factory().get_user_controller),
 ) -> list[UserResponse]:
-    users = await user_controller.get_all()
+    users = await user_controller.get_all_users()
     return users
 
 

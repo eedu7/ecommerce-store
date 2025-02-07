@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any, Dict, List
 from uuid import UUID
 
 from app.models import User
@@ -19,6 +19,18 @@ class UserController(BaseController[User]):
 
     async def get_by_email(self, email: str) -> User:
         return await self.user_repository.get_by_email(email)
+
+    async def get_all_users(self, skip: int = 0, limit: int = 100) -> List[User]:
+        """
+        Returns a list of users
+        :param skip: Number of records to skip (for pagination).
+        :param limit: Number of records to return.
+        :return: List of active users.
+        """
+        filters = {"deleted_at": None, "deleted_by": None}
+        return await self.user_repository.get_all(
+            skip=skip, limit=limit, filters=filters
+        )
 
     @Transactional(propagation=Propagation.REQUIRED)
     async def update_last_login(self, email: str) -> None:
