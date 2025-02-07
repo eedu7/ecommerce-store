@@ -32,7 +32,18 @@ class S3ImageManager:
         return False
 
     @staticmethod
-    def construct_url(file_name: str) -> str:
+    def construct_file_name(file_name: str) -> str:
         timestamp = datetime.utcnow().strftime("%Y%m%d%H%M%S")
-        file_name_with_timestamp = f"{timestamp}_{file_name}"
-        return f"https://{S3ImageManager.bucket_name}.s3.amazonaws.com/{file_name_with_timestamp}"
+        return f"{timestamp}_{file_name}"
+
+    @staticmethod
+    async def get_presigned_url(file_name: str, expiration: int = 3600) -> str:
+        try:
+            url = S3ImageManager.s3.generate_presigned_url(
+                "get_object",
+                Params={"Bucket": S3ImageManager.bucket_name, "Key": file_name},
+                ExpiresIn=expiration,
+            )
+            return url
+        except NoCredentialsError:
+            raise UnauthorizedException("AWS credentials not available")

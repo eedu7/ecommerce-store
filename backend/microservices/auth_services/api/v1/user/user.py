@@ -38,7 +38,7 @@ async def upload_profile_image(
     file: UploadFile = File(...),
     user_controller: UserController = Depends(Factory().get_user_controller),
 ):
-    file_name = S3ImageManager.construct_url(file.filename)
+    file_name = S3ImageManager.construct_file_name(file.filename)
 
     # Uploading the image
     await S3ImageManager.upload_image(file, file_name)
@@ -50,7 +50,7 @@ async def upload_profile_image(
         content={
             "message": "ok",
             "detail": "Image uploaded successfully",
-            "file_name": file_name,
+            "file_name": await S3ImageManager.get_presigned_url(file_name),
         },
     )
 
