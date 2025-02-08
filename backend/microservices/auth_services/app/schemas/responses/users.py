@@ -2,8 +2,6 @@ from datetime import date
 
 from pydantic import UUID4, BaseModel, Field
 
-from app.integrations import S3ImageManager
-
 
 class UserResponse(BaseModel):
     email: str = Field(..., example="john.doe@example.com")

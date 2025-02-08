@@ -37,8 +37,11 @@ async def login_user(
 
 
 @router.post("/refresh-token")
-async def refresh_token():
-    return api_response("Refresh expired access tokens")
+async def refresh_token(
+    token: Token,
+    auth_controller: AuthController = Depends(Factory().get_auth_controller),
+):
+    return await auth_controller.refresh_token(**token.model_dump())
 
 
 @router.post("/logout")
