@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from api import router
+from core.cache import Cache, CustomKeyMaker, RedisBackend
 from core.exceptions import CustomException
 from core.fastapi.dependencies import Logging
 from core.fastapi.middlewares import (AuthBackend, AuthenticationMiddleware,
@@ -87,6 +88,10 @@ def make_middleware() -> List[Middleware]:
     return middleware
 
 
+def init_cache() -> None:
+    Cache.init(backend=RedisBackend(), key_maker=CustomKeyMaker())
+
+
 def create_app() -> FastAPI:
     app_ = FastAPI(
         title="Auth Service",
@@ -97,6 +102,7 @@ def create_app() -> FastAPI:
     )
     init_routers(app_=app_)
     init_listeners(app_=app_)
+    init_cache()
     return app_
 
 
