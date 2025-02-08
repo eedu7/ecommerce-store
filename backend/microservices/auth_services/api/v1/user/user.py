@@ -22,6 +22,14 @@ async def get_users(
     user_controller: UserController = Depends(Factory().get_user_controller),
 ) -> list[UserResponse]:
     users = await user_controller.get_all_users()
+
+    for user in users:
+        if user.profile_image_url is not None:
+            profile_image_url = await S3ImageManager.get_presigned_url(
+                user.profile_image_url
+            )
+            setattr(user, "profile_image_url", profile_image_url)
+
     return users
 
 
