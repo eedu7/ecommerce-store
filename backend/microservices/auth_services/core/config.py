@@ -20,6 +20,7 @@ class Config(BaseConfig):
     AWS_SECRET_ACCESS_KEY: str
     AWS_REGION: str
     AWS_BUCKET_NAME: str
+    REDIS_URL: str
 
 
 config: Config = Config()

@@ -31,7 +31,11 @@ class BaseRepository(Generic[ModelType]):
         return model
 
     async def get_all(
-        self, skip: int = 0, limit: int = 100, join_: set[str] | None = None
+        self,
+        skip: int = 0,
+        limit: int = 100,
+        join_: set[str] | None = None,
+        filters: dict[str, Any] | None = None,
     ) -> list[ModelType]:
         """
         Returns a list of model instances.
@@ -39,9 +43,14 @@ class BaseRepository(Generic[ModelType]):
         :param skip: The number of records to skip.
         :param limit: The number of record to return.
         :param join_: The joins to make.
+        :param filters: A dictionary of field-value pairs to filter the data.
         :return: A list of model instances.
         """
         query = self._query(join_)
+
+        if filters:
+            for field, value in filters.items():
+                query = await self._get_by(query, field, value)
         query = query.offset(skip).limit(limit)
 
         if join_ is not None:
