@@ -14,6 +14,10 @@ class LoginUserRequest(BaseModel):
     password: str = Field(..., min_length=8, max_length=64, examples=["Password@123"])
 
 
+class LogoutUserRequest(BaseModel):
+    access_token: str
+
+
 class RegisterUserRequest(BaseModel):
     email: EmailStr = Field(..., examples=["john.doe@example.com"])
     password: str = Field(..., min_length=8, max_length=64, examples=["Password@123"])
