@@ -7,6 +7,8 @@ from starlette.middleware.authentication import \
 from starlette.requests import HTTPConnection
 
 from app.schemas.extras.current_user import CurrentUser
+from core.cache import Cache
+from core.exceptions import UnauthorizedException
 from core.security import JWTHandler
 
 
@@ -31,6 +33,9 @@ class AuthBackend(AuthenticationBackend):
 
         try:
             payload = JWTHandler.decode(token)
+            result = await Cache.backend.get(f"blacklist::{payload['jti']}")
+            if result:
+                raise UnauthorizedException("Invalid token")
             user_id = payload.get("user_id")
         except JWTError:
             return False, current_user

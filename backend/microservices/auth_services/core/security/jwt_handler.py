@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from http import HTTPStatus
+from uuid import uuid4
 
 from jose import ExpiredSignatureError, JWTError, jwt
 
@@ -21,11 +22,12 @@ class JWTHandler:
     secret_key = config.JWT_SECRET_KEY
     algorithm = config.JWT_ALGORITHM
     expired_minutes = config.JWT_EXPIRE_MINUTES
-    expire = datetime.utcnow() + timedelta(minutes=expired_minutes)
 
     @staticmethod
     def encode(payload: dict) -> str:
-        payload.update({"exp": JWTHandler.expire})
+        expire = datetime.utcnow() + timedelta(minutes=JWTHandler.expired_minutes)
+        jti = str(uuid4())
+        payload.update({"exp": expire, "jti": jti})
         return jwt.encode(
             payload, JWTHandler.secret_key, algorithm=JWTHandler.algorithm
         )

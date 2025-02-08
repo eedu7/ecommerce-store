@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 
 from app.controllers import AuthController
 from app.schemas.extras.token import Token
-from app.schemas.requests.users import LoginUserRequest, RegisterUserRequest
+from app.schemas.requests.users import (LoginUserRequest, LogoutUserRequest,
+                                        RegisterUserRequest)
 from app.schemas.responses.users import UserResponse
 from core.factory import Factory
 from core.utils import api_response
@@ -11,7 +12,7 @@ from core.utils import api_response
 router = APIRouter()
 
 
-@router.post("/", status_code=201)
+@router.post("/", status_code=status.HTTP_201_CREATED, summary="Register User")
 async def register_user(
     register_user_request: RegisterUserRequest,
     auth_controller: AuthController = Depends(Factory().get_auth_controller),
@@ -38,15 +39,19 @@ async def login_user(
 
 @router.post("/refresh-token")
 async def refresh_token(
-    token: Token,
+    token: LogoutUserRequest,
     auth_controller: AuthController = Depends(Factory().get_auth_controller),
 ):
     return await auth_controller.refresh_token(**token.model_dump())
 
 
 @router.post("/logout")
-async def logout():
-    return api_response("Invalidate tokens and log the user out.")
+async def logout(
+    token: Token,
+    auth_controller: AuthController = Depends(Factory().get_auth_controller),
+):
+    await auth_controller.logout(token.access_token)
+    return JSONResponse(status_code=200, content={"message": "Successfully logged out"})
 
 
 @router.post("/change-password")

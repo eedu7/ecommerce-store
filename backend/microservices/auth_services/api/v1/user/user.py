@@ -47,8 +47,11 @@ async def get_user(
     user: User = Depends(get_current_user),
 ) -> UserResponse:
     # TODO: Change the profile_image_url respone in the pydantic model
-    profile_image_url = await S3ImageManager.get_presigned_url(user.profile_image_url)
-    setattr(user, "profile_image_url", profile_image_url)
+    if user.profile_image_url:
+        profile_image_url = await S3ImageManager.get_presigned_url(
+            user.profile_image_url
+        )
+        setattr(user, "profile_image_url", profile_image_url)
     return user
 
 
