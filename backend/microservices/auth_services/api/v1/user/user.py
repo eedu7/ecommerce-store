@@ -8,7 +8,7 @@ from app.integrations import S3ImageManager
 from app.models.user import User
 from app.schemas.requests.users import EditUserRequest
 from app.schemas.responses.users import UserResponse
-from core.cache import Cache, CacheTag
+from core.cache import Cache
 from core.exceptions import BadRequestException
 from core.factory import Factory
 from core.fastapi.dependencies import AuthenticationRequired
