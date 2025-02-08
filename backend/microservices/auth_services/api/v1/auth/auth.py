@@ -45,8 +45,11 @@ async def refresh_token(
 
 
 @router.post("/logout")
-async def logout():
-    return api_response("Invalidate tokens and log the user out.")
+async def logout(
+    token: Token,
+    auth_controller: AuthController = Depends(Factory().get_auth_controller),
+):
+    await auth_controller.logout(token.access_token)
 
 
 @router.post("/change-password")

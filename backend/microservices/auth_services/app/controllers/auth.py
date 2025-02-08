@@ -5,6 +5,7 @@ from pydantic import EmailStr
 from app.models import User
 from app.repositories import UserRepository
 from app.schemas.extras.token import Token
+from core.cache import Cache
 from core.controller import BaseController
 from core.database import Propagation, Transactional
 from core.exceptions import BadRequestException, UnauthorizedException
@@ -54,6 +55,13 @@ class AuthController(BaseController[User]):
             access_token=JWTHandler.encode(payload={"user_id": user.id}),
             refresh_token=JWTHandler.encode(payload={"sub": "refresh_token"}),
         )
+
+    async def logout(self, access_token: str):
+        payload = JWTHandler.decode(access_token)
+        jti, exp = payload.get("jti", None), payload.get("exp", None)
+        ttl = exp - int(datetime.utcnow().timestamp())
+        cache_key = f"blacklist::{jti}"
+        await Cache.backend.set("1", cache_key, ttl=ttl)
 
     async def refresh_token(self, access_token: str, refresh_token: str) -> Token:
         token = JWTHandler.decode(access_token)
