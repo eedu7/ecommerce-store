@@ -8,6 +8,7 @@ from app.integrations import S3ImageManager
 from app.models.user import User
 from app.schemas.requests.users import EditUserRequest
 from app.schemas.responses.users import UserResponse
+from core.cache import Cache, CacheTag
 from core.exceptions import BadRequestException
 from core.factory import Factory
 from core.fastapi.dependencies import AuthenticationRequired
@@ -19,9 +20,17 @@ router = APIRouter(dependencies=[Depends(AuthenticationRequired)])
 
 @router.get("/")
 async def get_users(
+    skip: int = 0,
+    limit: int = 100,
     user_controller: UserController = Depends(Factory().get_user_controller),
 ) -> list[UserResponse]:
-    users = await user_controller.get_all_users()
+    cache_key = f"user_list::{skip}_{limit}"
+
+    cached_users = await Cache.backend.get(cache_key)
+    if cached_users:
+        return cached_users
+
+    users = await user_controller.get_all_users(skip, limit)
 
     for user in users:
         if user.profile_image_url is not None:
@@ -29,7 +38,7 @@ async def get_users(
                 user.profile_image_url
             )
             setattr(user, "profile_image_url", profile_image_url)
-
+    await Cache.backend.set(users, cache_key, ttl=60)
     return users
 
 

@@ -33,9 +33,9 @@ class CacheManager:
                 await self.backend.set(response=response, key=key, ttl=ttl)
                 return response
 
-            return __cached()
+            return __cached
 
-        return _cached()
+        return _cached
 
     async def remove_by_tag(self, tag: CacheTag) -> None:
         await self.backend.delete_startswith(value=tag.value)
