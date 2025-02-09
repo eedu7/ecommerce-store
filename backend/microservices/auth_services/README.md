@@ -27,6 +27,7 @@ Create a `.env` file, and copy the `.env.example`, and also configure the variab
 
 ### Running the Service
 ```bash
+$docker-compose up -d
 $poetry shell
 $poetry install
 $python main.py
@@ -41,14 +42,48 @@ $python main.py
     {
         "email": "john.doe@example.com",
         "password": "Password@123",
-        "username": "JohnDoe"
+        "username": "johndoe"
     }
     ```
     - **Response Body**:
     ```json
     {
-        "access_token": "...",
-        "refresh_token": "...",
-        "token_type": "bearer"
+        "token": {
+            "access_token": "...",
+            "refresh_token": "...",
+            "token_type": "bearer"
+        },
+        "user": {
+            "email": "...",
+            "username": "...",
+            "uuid": "...",
+            "profile_image_url": "..."
+        }
+    }
+    ```
+2. **User Login**
+    - **Endpoint**: `POST /auth/login`
+    - **Description**: Logins a user.
+    - **Request Body**:
+    ```json
+    {
+        "email": "john.doe@example.com",
+        "password": "Password@123"
+    }
+    ```
+    - **Response Body**:
+    ```json
+        {
+        "token": {
+            "access_token": "...",
+            "refresh_token": "...",
+            "token_type": "bearer",
+        },
+        "user": {
+            "email": "john.doe@example.com",
+            "username": "johndoe",
+            "uuid": "a3b8f042-1e16-4f0a-a8f0-421e16df0a2f",
+            "profile_image_url": "https://example.com/image.jpg"
+        }
     }
     ```
