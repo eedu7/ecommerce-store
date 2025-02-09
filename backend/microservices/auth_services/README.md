@@ -42,7 +42,7 @@ $python main.py
     {
         "email": "john.doe@example.com",
         "password": "Password@123",
-        "username": "JohnDoe"
+        "username": "john.doe"
     }
     ```
     - **Response Body**:
@@ -58,6 +58,32 @@ $python main.py
             "username": "...",
             "uuid": "...",
             "profile_image_url": "..."
+        }
+    }
+    ```
+2. **User Login**
+    - **Endpoint**: `POST /auth/login`
+    - **Description**: Logins a user.
+    - **Request Body**:
+    ```json
+    {
+        "email": "john.doe@example.com",
+        "password": "Password@123"
+    }
+    ```
+    - **Response Body**:
+    ```json
+        {
+        "token": {
+            "access_token": "...",
+            "refresh_token": "...",
+            "token_type": "bearer",
+        },
+        "user": {
+            "email": "john.doe@example.com",
+            "username": "john.doe",
+            "uuid": "a3b8f042-1e16-4f0a-a8f0-421e16df0a2f",
+            "profile_image_url": "https://example.com/image.jpg"
         }
     }
     ```
