@@ -5,7 +5,7 @@ from app.controllers import AuthController
 from app.schemas.extras.token import Token
 from app.schemas.requests.users import (LoginUserRequest, LogoutUserRequest,
                                         RegisterUserRequest)
-from app.schemas.responses.users import UserResponse
+from app.schemas.responses.users import RegisterUserResponse
 from core.factory import Factory
 from core.utils import api_response
 
@@ -16,12 +16,17 @@ router = APIRouter()
 async def register_user(
     register_user_request: RegisterUserRequest,
     auth_controller: AuthController = Depends(Factory().get_auth_controller),
-) -> UserResponse:
-    return await auth_controller.register(
+) -> RegisterUserResponse:
+    user = await auth_controller.register(
         email=register_user_request.email,
         password=register_user_request.password,
         username=register_user_request.username,
     )
+    token = await auth_controller.login(
+        user.email, user.password, verify_password=False
+    )
+    response = {"token": token.model_dump(), "user": user}
+    return response
 
 
 @router.post("/login")

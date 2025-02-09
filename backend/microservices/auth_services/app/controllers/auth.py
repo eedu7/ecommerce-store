@@ -6,6 +6,7 @@ from app.models import User
 from app.repositories import UserRepository
 from app.schemas.extras.token import Token
 from core.cache import Cache
+from core.config import config
 from core.controller import BaseController
 from core.database import Propagation, Transactional
 from core.exceptions import BadRequestException, UnauthorizedException
@@ -42,18 +43,26 @@ class AuthController(BaseController[User]):
             }
         )
 
-    async def login(self, email: EmailStr, password: str) -> Token:
+    async def login(
+        self, email: EmailStr, password: str, verify_password: bool = True
+    ) -> Token:
         user = await self.user_repository.get_by_email(email)
 
         if not user:
             raise BadRequestException("No user found")
 
-        if not PasswordHandler.verify(user.password, password):
+        if not PasswordHandler.verify(user.password, password) and verify_password:
             raise BadRequestException("Invalid credentials")
 
         return Token(
-            access_token=JWTHandler.encode(payload={"user_id": user.id}),
-            refresh_token=JWTHandler.encode(payload={"sub": "refresh_token"}),
+            access_token=JWTHandler.encode(
+                payload={"user_id": user.id},
+                expire_minutes=config.JWT_ACCESS_TOKEN_EXPIRE_MINUTES,
+            ),
+            refresh_token=JWTHandler.encode(
+                payload={"sub": "refresh_token"},
+                expire_minutes=config.JWT_REFRESH_TOKEN_EXPIRE_DAYS_IN_MINUTES,
+            ),
         )
 
     async def logout(self, access_token: str):
@@ -70,6 +79,12 @@ class AuthController(BaseController[User]):
             raise UnauthorizedException("Invalid refresh token")
 
         return Token(
-            access_token=JWTHandler.encode(payload={"user_id": token.get("user_id")}),
-            refresh_token=JWTHandler.encode(payload={"sub": "refresh_token"}),
+            access_token=JWTHandler.encode(
+                payload={"user_id": token.get("user_id")},
+                expire_minutes=config.JWT_ACCESS_TOKEN_EXPIRE_MINUTES,
+            ),
+            refresh_token=JWTHandler.encode(
+                payload={"sub": "refresh_token"},
+                expire_minutes=config.JWT_REFRESH_TOKEN_EXPIRE_DAYS_IN_MINUTES,
+            ),
         )
