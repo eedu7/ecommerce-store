@@ -21,13 +21,12 @@ class JWTExpiredError(CustomException):
 class JWTHandler:
     secret_key = config.JWT_SECRET_KEY
     algorithm = config.JWT_ALGORITHM
-    expired_minutes = config.JWT_EXPIRE_MINUTES
 
     @staticmethod
-    def encode(payload: dict) -> str:
-        expire = datetime.utcnow() + timedelta(minutes=JWTHandler.expired_minutes)
+    def encode(payload: dict, expire_minutes: int = 60) -> str:
+        expire = datetime.utcnow() + timedelta(expire_minutes)
         jti = str(uuid4())
-        payload.update({"exp": expire, "jti": jti})
+        payload.update({"exp": expire, "jti": jti, "iat": datetime.utcnow()})
         return jwt.encode(
             payload, JWTHandler.secret_key, algorithm=JWTHandler.algorithm
         )
