@@ -42,7 +42,7 @@ $python main.py
     {
         "email": "john.doe@example.com",
         "password": "Password@123",
-        "username": "john.doe"
+        "username": "johndoe"
     }
     ```
     - **Response Body**:
@@ -81,7 +81,7 @@ $python main.py
         },
         "user": {
             "email": "john.doe@example.com",
-            "username": "john.doe",
+            "username": "johndoe",
             "uuid": "a3b8f042-1e16-4f0a-a8f0-421e16df0a2f",
             "profile_image_url": "https://example.com/image.jpg"
         }
