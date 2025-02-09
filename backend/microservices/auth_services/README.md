@@ -27,6 +27,7 @@ Create a `.env` file, and copy the `.env.example`, and also configure the variab
 
 ### Running the Service
 ```bash
+$docker-compose up -d
 $poetry shell
 $poetry install
 $python main.py
@@ -47,8 +48,16 @@ $python main.py
     - **Response Body**:
     ```json
     {
-        "access_token": "...",
-        "refresh_token": "...",
-        "token_type": "bearer"
+        "token": {
+            "access_token": "...",
+            "refresh_token": "...",
+            "token_type": "bearer"
+        },
+        "user": {
+            "email": "...",
+            "username": "...",
+            "uuid": "...",
+            "profile_image_url": "..."
+        }
     }
     ```
