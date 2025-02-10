@@ -45,7 +45,7 @@ class AuthController(BaseController[User]):
 
     async def login(
         self, email: EmailStr, password: str, verify_password: bool = True
-    ) -> Token:
+    ) -> tuple[Token, User]:
         user = await self.user_repository.get_by_email(email)
 
         if not user:
@@ -60,10 +60,11 @@ class AuthController(BaseController[User]):
                 expire_minutes=config.JWT_ACCESS_TOKEN_EXPIRE_MINUTES,
             ),
             refresh_token=JWTHandler.encode(
-                payload={"sub": "refresh_token"},
+                payload={"sub": "refresh_token", "user_id": user.id},
                 expire_minutes=config.JWT_REFRESH_TOKEN_EXPIRE_DAYS_IN_MINUTES,
             ),
-        )
+            expires_in=config.JWT_ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        ), user
 
     async def logout(self, access_token: str):
         payload = JWTHandler.decode(access_token)
@@ -77,14 +78,16 @@ class AuthController(BaseController[User]):
         refresh_token = JWTHandler.decode(refresh_token)
         if refresh_token.get("sub") != "refresh_token":
             raise UnauthorizedException("Invalid refresh token")
+        user_id = token.get("user_id", None)
 
         return Token(
             access_token=JWTHandler.encode(
-                payload={"user_id": token.get("user_id")},
+                payload={"user_id": user_id},
                 expire_minutes=config.JWT_ACCESS_TOKEN_EXPIRE_MINUTES,
             ),
             refresh_token=JWTHandler.encode(
-                payload={"sub": "refresh_token"},
+                payload={"sub": "refresh_token", "user_id": user_id},
                 expire_minutes=config.JWT_REFRESH_TOKEN_EXPIRE_DAYS_IN_MINUTES,
             ),
+            expires_in=config.JWT_ACCESS_TOKEN_EXPIRE_MINUTES * 60,
         )
