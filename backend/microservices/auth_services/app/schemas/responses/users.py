@@ -13,6 +13,6 @@ class UserResponse(BaseModel):
         form_attributes = True
 
 
-class RegisterUserResponse(BaseModel):
+class AuthUserResponse(BaseModel):
     token: Token
     user: UserResponse

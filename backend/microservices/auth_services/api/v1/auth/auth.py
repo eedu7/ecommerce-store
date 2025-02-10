@@ -5,18 +5,18 @@ from app.controllers import AuthController
 from app.schemas.extras.token import Token
 from app.schemas.requests.users import (LoginUserRequest, LogoutUserRequest,
                                         RegisterUserRequest)
-from app.schemas.responses.users import RegisterUserResponse
+from app.schemas.responses.users import AuthUserResponse
 from core.factory import Factory
 from core.utils import api_response
 
 router = APIRouter()
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED, summary="Register User")
+@router.post("/register", status_code=status.HTTP_201_CREATED, summary="Register User")
 async def register_user(
     register_user_request: RegisterUserRequest,
     auth_controller: AuthController = Depends(Factory().get_auth_controller),
-) -> RegisterUserResponse:
+) -> AuthUserResponse:
     user = await auth_controller.register(
         email=register_user_request.email,
         password=register_user_request.password,
@@ -34,12 +34,12 @@ async def login_user(
     login_user_request: LoginUserRequest,
     auth_controller: AuthController = Depends(Factory().get_auth_controller),
     user_controller: AuthController = Depends(Factory().get_user_controller),
-) -> Token:
-    jwt_token = await auth_controller.login(
+) -> AuthUserResponse:
+    jwt_token, user = await auth_controller.login(
         email=login_user_request.email, password=login_user_request.password
     )
     await user_controller.update_last_login(email=login_user_request.email)
-    return jwt_token
+    return {"token": jwt_token, "user": user}
 
 
 @router.post("/refresh-token")
