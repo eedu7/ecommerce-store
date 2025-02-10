@@ -51,7 +51,8 @@ $python main.py
         "token": {
             "access_token": "...",
             "refresh_token": "...",
-            "token_type": "bearer"
+            "token_type": "bearer",
+            "expires_in": 3600
         },
         "user": {
             "email": "...",
@@ -78,6 +79,7 @@ $python main.py
             "access_token": "...",
             "refresh_token": "...",
             "token_type": "bearer",
+            "expires_in": 3600
         },
         "user": {
             "email": "john.doe@example.com",
