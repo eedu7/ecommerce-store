@@ -39,40 +39,47 @@ install:  ## Install dependencies
 	poetry install
 
 .PHONY: run
-	run: start
+run: start
 
 .PHONY: start
-	start:  ## Starts the server
-		$(eval include .env)
-		$(eval export $(sh sed 's/=.*//' .env))
-
-		poetry run python main.py
+start:  ## Starts the server
+	$(eval include .env)
+	$(eval export $(sh sed 's/=.*//' .env))
+	poetry run python main.py
 
 .PHONY: migrate
-	migrate:  ## Run the migrations
-		$(eval include .env)
-		$(eval export $(sh sed 's/=.*//' .env))
-
-		poetry run alembic upgrade head
+migrate:  ## Run the migrations
+	$(eval include .env)
+	$(eval export $(sh sed 's/=.*//' .env))
+	poetry run alembic upgrade head
 
 .PHONY: rollback
-	rollback:  ## Rollback migrations one level
-		$(eval include .env)
-		$(eval export $(sh sed 's/=.*//' .env))
-
-		poetry run alembic downgrade -1
+rollback:  ## Rollback migrations one level
+	$(eval include .env)
+	$(eval export $(sh sed 's/=.*//' .env))
+	poetry run alembic downgrade -1
 
 .PHONY: reset-database
-	reset-database:  ## Rollback all migrations
-		$(eval include .env)
-		$(eval export $(sh sed 's/=.*//' .env))
-
-		poetry run alembic downgrade base
+reset-database:  ## Rollback all migrations
+	$(eval include .env)
+	$(eval export $(sh sed 's/=.*//' .env))
+	poetry run alembic downgrade base
 
 .PHONY: generate-migration
-	generate-migration:  ## Generate a new migration
-		$(eval include .env)
-		$(eval export $(sh sed 's/=.*//' .env))
+generate-migration:  ## Generate a new migration
+	$(eval include .env)
+	$(eval export $(sh sed 's/=.*//' .env))
+	@read -p "Enter migration message: " message; \
+	poetry run alembic revision --autogenerate -m "$$message"
 
-		@read -p "Enter migration message: " message; \
-		poetry run alembic revision --autogenerate -m "$$message"
+
+# Check, lint and format targets
+# ------------------------------
+
+.PHONY: check
+	check: check-format lint
+
+.PHONY: format
+format: ## Run code formatter
+	poetry run ruff format ./
+	poetry run isort ./ 
