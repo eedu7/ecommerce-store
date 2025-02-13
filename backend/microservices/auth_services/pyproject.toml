@@ -19,6 +19,10 @@ pydantic-extra-types = "^2.10.2"
 phonenumbers = "^8.13.54"
 boto3 = "^1.36.14"
 redis = "^5.2.1"
+celery = "^5.4.0"
+faker = "^36.1.0"
+pytest-asyncio = "^0.25.3"
+pylint = "^3.3.4"
 
 
 [tool.poetry.group.dev.dependencies]
