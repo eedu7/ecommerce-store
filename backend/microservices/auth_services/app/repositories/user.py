@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict
 
 from app.models import User
@@ -53,7 +53,7 @@ class UserRepository(BaseRepository[User]):
         :param user: The user instance.
         :return: None.
         """
-        user.last_login_at = datetime.utcnow()
+        user.last_login_at = datetime.now(timezone.utc)
         self.session.add(user)
 
     async def update_user(self, user: User, attributes: Dict[str, Any]) -> User:

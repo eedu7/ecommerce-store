@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from pydantic import EmailStr
 
@@ -69,7 +69,7 @@ class AuthController(BaseController[User]):
     async def logout(self, access_token: str):
         payload = JWTHandler.decode(access_token)
         jti, exp = payload.get("jti", None), payload.get("exp", None)
-        ttl = exp - int(datetime.utcnow().timestamp())
+        ttl = exp - int(datetime.now(timezone.utc).timestamp())
         cache_key = f"blacklist::{jti}"
         await Cache.backend.set("1", cache_key, ttl=ttl)
 
