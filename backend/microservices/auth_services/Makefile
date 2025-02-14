@@ -82,4 +82,3 @@ generate-migration:  ## Generate a new migration
 .PHONY: format
 format: ## Run code formatter
 	poetry run ruff format ./
-	poetry run isort ./ 

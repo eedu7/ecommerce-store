@@ -1,9 +1,6 @@
-from typing import Optional, Tuple
-
 from jose import JWTError
 from starlette.authentication import AuthenticationBackend
-from starlette.middleware.authentication import \
-    AuthenticationMiddleware as BaseAuthenticationMiddleware
+from starlette.middleware.authentication import AuthenticationMiddleware as BaseAuthenticationMiddleware
 from starlette.requests import HTTPConnection
 
 from app.schemas.extras.current_user import CurrentUser
@@ -13,9 +10,7 @@ from core.security import JWTHandler
 
 
 class AuthBackend(AuthenticationBackend):
-    async def authenticate(
-        self, conn: HTTPConnection
-    ) -> Tuple[bool, Optional[CurrentUser]]:
+    async def authenticate(self, conn: HTTPConnection) -> tuple[bool, CurrentUser | None]:
         current_user = CurrentUser()
         authorization: str = conn.headers.get("Authorization")
         if not authorization:

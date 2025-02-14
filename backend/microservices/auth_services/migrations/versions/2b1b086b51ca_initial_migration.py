@@ -6,16 +6,16 @@ Create Date: 2025-02-05 16:55:10.061865
 
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "2b1b086b51ca"
-down_revision: Union[str, None] = None
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = None
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -73,9 +73,7 @@ def upgrade() -> None:
         sa.Column("country", sa.Unicode(length=100), nullable=False),
         sa.Column(
             "address_type",
-            sa.Enum(
-                "BILLING", "SHIPPING", "HOME", "WORK", "WAREHOUSE", name="addresstype"
-            ),
+            sa.Enum("BILLING", "SHIPPING", "HOME", "WORK", "WAREHOUSE", name="addresstype"),
             nullable=False,
         ),
         sa.Column("created_at", sa.DateTime(), nullable=False),

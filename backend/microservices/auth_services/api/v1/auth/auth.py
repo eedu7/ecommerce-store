@@ -3,8 +3,7 @@ from fastapi.responses import JSONResponse
 
 from app.controllers import AuthController
 from app.schemas.extras.token import Token
-from app.schemas.requests.users import (LoginUserRequest, LogoutUserRequest,
-                                        RegisterUserRequest)
+from app.schemas.requests.users import LoginUserRequest, LogoutUserRequest, RegisterUserRequest
 from app.schemas.responses.users import AuthUserResponse
 from core.factory import Factory
 from core.utils import api_response
@@ -22,9 +21,7 @@ async def register_user(
         password=register_user_request.password,
         username=register_user_request.username,
     )
-    token = await auth_controller.login(
-        user.email, user.password, verify_password=False
-    )
+    token = await auth_controller.login(user.email, user.password, verify_password=False)
     response = {"token": token.model_dump(), "user": user}
     return response
 
@@ -35,9 +32,7 @@ async def login_user(
     auth_controller: AuthController = Depends(Factory().get_auth_controller),
     user_controller: AuthController = Depends(Factory().get_user_controller),
 ) -> AuthUserResponse:
-    jwt_token, user = await auth_controller.login(
-        email=login_user_request.email, password=login_user_request.password
-    )
+    jwt_token, user = await auth_controller.login(email=login_user_request.email, password=login_user_request.password)
     await user_controller.update_last_login(email=login_user_request.email)
     return {"token": jwt_token, "user": user}
 

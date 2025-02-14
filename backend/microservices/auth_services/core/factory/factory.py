@@ -18,9 +18,7 @@ class Factory:
     user_repository = partial(UserRepository, User)
 
     def get_user_controller(self, db_session=Depends(get_session)):
-        return UserController(
-            user_repository=self.user_repository(db_session=db_session)
-        )
+        return UserController(user_repository=self.user_repository(db_session=db_session))
 
     def get_auth_controller(self, db_session=Depends(get_session)):
         return AuthController(

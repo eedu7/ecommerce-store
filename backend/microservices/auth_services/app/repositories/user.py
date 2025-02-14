@@ -1,5 +1,5 @@
-from datetime import datetime, timezone
-from typing import Any, Dict
+from datetime import UTC, datetime
+from typing import Any
 
 from app.models import User
 from core.repository import BaseRepository
@@ -10,9 +10,7 @@ class UserRepository(BaseRepository[User]):
     User repository provides all the database operations for the User model.
     """
 
-    async def get_by_username(
-        self, username: str, join_: set[str] | None = None
-    ) -> User | None:
+    async def get_by_username(self, username: str, join_: set[str] | None = None) -> User | None:
         """
         Get user by username.
 
@@ -28,9 +26,7 @@ class UserRepository(BaseRepository[User]):
 
         return await self._one_or_none(query)
 
-    async def get_by_email(
-        self, email: str, join_: set[str] | None = None
-    ) -> User | None:
+    async def get_by_email(self, email: str, join_: set[str] | None = None) -> User | None:
         """
         Get user by email.
 
@@ -53,10 +49,10 @@ class UserRepository(BaseRepository[User]):
         :param user: The user instance.
         :return: None.
         """
-        user.last_login_at = datetime.now(timezone.utc)
+        user.last_login_at = datetime.now(UTC)
         self.session.add(user)
 
-    async def update_user(self, user: User, attributes: Dict[str, Any]) -> User:
+    async def update_user(self, user: User, attributes: dict[str, Any]) -> User:
         """
         Update user details.
 

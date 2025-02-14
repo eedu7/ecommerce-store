@@ -89,3 +89,63 @@ $python main.py
         }
     }
     ```
+3. **Refresh Token**
+    - **Endpoint**: `POST /auth/logout`
+    - **Description**: Logouts the user
+    - **Request Body**:
+    ```json
+    {
+        <!-- TODO: Added the request body -->
+    }
+    ```
+    - **Response Body**:
+    ```json
+    {
+        "message": "Successfully logged out"
+    }
+    ```
+4. **Change Password**
+    - **Endpoint**: `POST /auth/change-password`
+    - **Description**: Changes the user password
+    - **Request Body**:
+    ```json
+    ```
+    - **Response Body**:
+    ```json
+    ```
+5. **Forgot Password**
+    - **Endpoint**: `POST /auth/forgot-password` 
+    - **Description**: Intiate password reset process
+    - **Request Body**:
+    ```json
+    ```
+    - **Response Body**:
+    ```json
+    ```
+6. **Reset Password**
+    - **Endpoint**: `POST /auth/reset-password`
+    - **Description**:  Reset Password
+    - **Request Body**:
+    ```json
+    ```
+    - **Response Body**:
+    ```json
+    ```
+7. **Verify Email**
+    - **Endpoint**: `POST /auth/verify-email`
+    - **Description**: Verify email
+    - **Request Body**:
+    ```json
+    ```
+    - **Response Body**:
+    ```json
+    ```
+8. **Resend Verification**
+    - **Endpoint**: `POST /auth/resend-verification`
+    - **Description**: Resend email verification link
+    - **Request Body**:
+    ```json
+    ```
+    - **Response Body**:
+    ```json
+    ```

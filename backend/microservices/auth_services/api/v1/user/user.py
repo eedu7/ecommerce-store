@@ -34,10 +34,8 @@ async def get_users(
 
     for user in users:
         if user.profile_image_url is not None:
-            profile_image_url = await S3ImageManager.get_presigned_url(
-                user.profile_image_url
-            )
-            setattr(user, "profile_image_url", profile_image_url)
+            profile_image_url = await S3ImageManager.get_presigned_url(user.profile_image_url)
+            user.profile_image_url = profile_image_url
     await Cache.backend.set(users, cache_key, ttl=60)
     return users
 
@@ -48,10 +46,8 @@ async def get_user(
 ) -> UserResponse:
     # TODO: Change the profile_image_url respone in the pydantic model
     if user.profile_image_url:
-        profile_image_url = await S3ImageManager.get_presigned_url(
-            user.profile_image_url
-        )
-        setattr(user, "profile_image_url", profile_image_url)
+        profile_image_url = await S3ImageManager.get_presigned_url(user.profile_image_url)
+        user.profile_image_url = profile_image_url
     return user
 
 
@@ -92,9 +88,7 @@ async def update_user_profile(
 
 
 @router.delete("/{uuid}")
-async def delete_user(
-    uuid: UUID, user_controller: UserController = Depends(Factory().get_user_controller)
-):
+async def delete_user(uuid: UUID, user_controller: UserController = Depends(Factory().get_user_controller)):
     deleted = await user_controller.delete_user(uuid)
     if deleted:
         return JSONResponse(status_code=200, content={"message": "User deleted"})

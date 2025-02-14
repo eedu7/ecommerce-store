@@ -1,5 +1,3 @@
-from typing import List
-
 from fastapi import Depends, FastAPI, Request
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,9 +7,12 @@ from api import router
 from core.cache import Cache, CustomKeyMaker, RedisBackend
 from core.exceptions import CustomException
 from core.fastapi.dependencies import Logging
-from core.fastapi.middlewares import (AuthBackend, AuthenticationMiddleware,
-                                      ResponseLoggerMiddleware,
-                                      SQLAlchemyMiddleware)
+from core.fastapi.middlewares import (
+    AuthBackend,
+    AuthenticationMiddleware,
+    ResponseLoggerMiddleware,
+    SQLAlchemyMiddleware,
+)
 
 
 def on_auth_error(request: Request, exc: Exception):
@@ -68,7 +69,7 @@ def init_listeners(app_: FastAPI) -> None:
     app_.add_exception_handler(Exception, global_custom_exception)
 
 
-def make_middleware() -> List[Middleware]:
+def make_middleware() -> list[Middleware]:
     middleware = [
         Middleware(
             CORSMiddleware,

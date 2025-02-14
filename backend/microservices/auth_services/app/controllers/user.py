@@ -1,5 +1,5 @@
-from datetime import datetime, timezone
-from typing import Any, Dict, List
+from datetime import UTC, datetime
+from typing import Any
 from uuid import UUID
 
 from app.models import User
@@ -20,7 +20,7 @@ class UserController(BaseController[User]):
     async def get_by_email(self, email: str) -> User:
         return await self.user_repository.get_by_email(email)
 
-    async def get_all_users(self, skip: int = 0, limit: int = 100) -> List[User]:
+    async def get_all_users(self, skip: int = 0, limit: int = 100) -> list[User]:
         """
         Returns a list of users
         :param skip: Number of records to skip (for pagination).
@@ -28,20 +28,16 @@ class UserController(BaseController[User]):
         :return: List of active users.
         """
         filters = {"deleted_at": None, "deleted_by": None}
-        return await self.user_repository.get_all(
-            skip=skip, limit=limit, filters=filters
-        )
+        return await self.user_repository.get_all(skip=skip, limit=limit, filters=filters)
 
     @Transactional(propagation=Propagation.REQUIRED)
     async def update_last_login(self, email: str) -> None:
         user = await self.get_by_email(email)
         if user:
-            await self.user_repository.update_user(
-                user, {"last_login_at": datetime.now(timezone.utc)}
-            )
+            await self.user_repository.update_user(user, {"last_login_at": datetime.now(UTC)})
 
     @Transactional(propagation=Propagation.REQUIRED)
-    async def update_user(self, user_uuid: UUID, data: Dict[str, Any]) -> bool:
+    async def update_user(self, user_uuid: UUID, data: dict[str, Any]) -> bool:
         user = await self.get_by_uuid(user_uuid)
         if user:
             await self.user_repository.update_user(
@@ -49,7 +45,7 @@ class UserController(BaseController[User]):
                 {
                     **data,
                     "updated_by": user.id,
-                    "updated_at": datetime.now(timezone.utc),
+                    "updated_at": datetime.now(UTC),
                 },
             )
             return True
@@ -74,7 +70,5 @@ class UserController(BaseController[User]):
         user = await self.get_by_uuid(user_uuid)
         if not user:
             raise NotFoundException("User not found")
-        await self.user_repository.update_user(
-            user, {"deleted_at": datetime.now(timezone.utc), "deleted_by": user.id}
-        )
+        await self.user_repository.update_user(user, {"deleted_at": datetime.now(UTC), "deleted_by": user.id})
         return True

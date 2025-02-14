@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from pydantic import EmailStr
 
@@ -34,18 +34,14 @@ class AuthController(BaseController[User]):
 
         password = PasswordHandler.hash(password)
 
-        return await self.user_repository.create(
-            {
-                "email": email,
-                "password": password,
-                "username": username,
-                "last_login_at": datetime.now(),
-            }
-        )
+        return await self.user_repository.create({
+            "email": email,
+            "password": password,
+            "username": username,
+            "last_login_at": datetime.now(),
+        })
 
-    async def login(
-        self, email: EmailStr, password: str, verify_password: bool = True
-    ) -> tuple[Token, User]:
+    async def login(self, email: EmailStr, password: str, verify_password: bool = True) -> tuple[Token, User]:
         user = await self.user_repository.get_by_email(email)
 
         if not user:
@@ -69,7 +65,7 @@ class AuthController(BaseController[User]):
     async def logout(self, access_token: str):
         payload = JWTHandler.decode(access_token)
         jti, exp = payload.get("jti", None), payload.get("exp", None)
-        ttl = exp - int(datetime.now(timezone.utc).timestamp())
+        ttl = exp - int(datetime.now(UTC).timestamp())
         cache_key = f"blacklist::{jti}"
         await Cache.backend.set("1", cache_key, ttl=ttl)
 

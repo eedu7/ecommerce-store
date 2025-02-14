@@ -1,5 +1,4 @@
 from functools import wraps
-from typing import Type
 
 from .base import BaseBackend, BaseKeyMaker
 from .cache_tag import CacheTag
@@ -10,7 +9,7 @@ class CacheManager:
         self.backend = None
         self.key_maker = None
 
-    def init(self, backend: Type[BaseBackend], key_maker: Type[BaseKeyMaker]) -> None:
+    def init(self, backend: type[BaseBackend], key_maker: type[BaseKeyMaker]) -> None:
         self.backend = backend
         self.key_maker = key_maker
 
@@ -21,9 +20,7 @@ class CacheManager:
                 if not self.backend or not self.key_maker:
                     raise ValueError("Backend or KeyMaker not initialized")
 
-                key = await self.key_maker.make(
-                    func=func, prefix=prefix if prefix else tag.value
-                )
+                key = await self.key_maker.make(func=func, prefix=prefix if prefix else tag.value)
                 cached_response = await self.backend.get(key=key)
 
                 if cached_response:

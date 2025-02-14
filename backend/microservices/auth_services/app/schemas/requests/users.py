@@ -55,12 +55,8 @@ class RegisterUserRequest(BaseModel):
 
 
 class EditUserRequest(BaseModel):
-    username: str | None = Field(
-        None, min_length=3, max_length=64, examples=["JohnDoe"]
-    )
-    phone_number: PhoneNumber | None = Field(
-        None, min_length=10, max_length=20, examples=["+1234567890"]
-    )
+    username: str | None = Field(None, min_length=3, max_length=64, examples=["JohnDoe"])
+    phone_number: PhoneNumber | None = Field(None, min_length=10, max_length=20, examples=["+1234567890"])
     first_name: str | None = Field(None, min_length=1, max_length=50, examples=["John"])
     last_name: str | None = Field(None, min_length=1, max_length=50, examples=["Doe"])
     gender: GenderType = Field(
