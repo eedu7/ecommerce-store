@@ -83,12 +83,13 @@ async def update_user_profile(
     data = user_data.model_dump()
     updated = await user_controller.update_user(uuid, data)
     if updated:
-        raise JSONResponse(status_code=200, content={"message": "User profile updated"})
+        return JSONResponse(status_code=200, content={"message": "User profile updated"})
     raise BadRequestException("Error updating user profile")
 
 
 @router.delete("/{uuid}")
 async def delete_user(uuid: UUID, user_controller: UserController = Depends(Factory().get_user_controller)):
+    # TODO: Invalidate the token
     deleted = await user_controller.delete_user(uuid)
     if deleted:
         return JSONResponse(status_code=200, content={"message": "User deleted"})

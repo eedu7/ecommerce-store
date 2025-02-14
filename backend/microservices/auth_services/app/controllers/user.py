@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import Any
 from uuid import UUID
 
@@ -34,7 +34,9 @@ class UserController(BaseController[User]):
     async def update_last_login(self, email: str) -> None:
         user = await self.get_by_email(email)
         if user:
-            await self.user_repository.update_user(user, {"last_login_at": datetime.now(UTC)})
+            await self.user_repository.update_user(
+                user, {"last_login_at": datetime.now(timezone.utc).replace(tzinfo=None)}
+            )
 
     @Transactional(propagation=Propagation.REQUIRED)
     async def update_user(self, user_uuid: UUID, data: dict[str, Any]) -> bool:
@@ -45,7 +47,7 @@ class UserController(BaseController[User]):
                 {
                     **data,
                     "updated_by": user.id,
-                    "updated_at": datetime.now(UTC),
+                    "updated_at": datetime.now(timezone.utc).replace(tzinfo=None),
                 },
             )
             return True
@@ -70,5 +72,7 @@ class UserController(BaseController[User]):
         user = await self.get_by_uuid(user_uuid)
         if not user:
             raise NotFoundException("User not found")
-        await self.user_repository.update_user(user, {"deleted_at": datetime.now(UTC), "deleted_by": user.id})
+        await self.user_repository.update_user(
+            user, {"deleted_at": datetime.now(timezone.utc).replace(tzinfo=None), "deleted_by": user.id}
+        )
         return True

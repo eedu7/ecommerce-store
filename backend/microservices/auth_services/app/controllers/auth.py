@@ -64,17 +64,21 @@ class AuthController(BaseController[User]):
 
     async def logout(self, access_token: str):
         payload = JWTHandler.decode(access_token)
+
         jti, exp = payload.get("jti", None), payload.get("exp", None)
+
         ttl = exp - int(datetime.now(UTC).timestamp())
+
         cache_key = f"blacklist::{jti}"
+
         await Cache.backend.set("1", cache_key, ttl=ttl)
 
-    async def refresh_token(self, access_token: str, refresh_token: str) -> Token:
-        token = JWTHandler.decode(access_token)
+    async def refresh_token(self, refresh_token: str) -> Token:
         refresh_token = JWTHandler.decode(refresh_token)
         if refresh_token.get("sub") != "refresh_token":
             raise UnauthorizedException("Invalid refresh token")
-        user_id = token.get("user_id", None)
+
+        user_id = refresh_token.get("user_id", None)
 
         return Token(
             access_token=JWTHandler.encode(

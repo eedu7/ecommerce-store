@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 
-from app.controllers import AuthController
-from app.schemas.extras.token import Token
-from app.schemas.requests.users import LoginUserRequest, LogoutUserRequest, RegisterUserRequest
+from app.controllers import AuthController, UserController
+from app.schemas.extras.token import LogoutTokenRequest, RefreshTokenRequest
+from app.schemas.requests.users import LoginUserRequest, RegisterUserRequest
 from app.schemas.responses.users import AuthUserResponse
 from core.factory import Factory
 from core.utils import api_response
@@ -21,8 +21,8 @@ async def register_user(
         password=register_user_request.password,
         username=register_user_request.username,
     )
-    token = await auth_controller.login(user.email, user.password, verify_password=False)
-    response = {"token": token.model_dump(), "user": user}
+    token, user = await auth_controller.login(user.email, user.password, verify_password=False)
+    response = {"token": token, "user": user}
     return response
 
 
@@ -30,7 +30,7 @@ async def register_user(
 async def login_user(
     login_user_request: LoginUserRequest,
     auth_controller: AuthController = Depends(Factory().get_auth_controller),
-    user_controller: AuthController = Depends(Factory().get_user_controller),
+    user_controller: UserController = Depends(Factory().get_user_controller),
 ) -> AuthUserResponse:
     jwt_token, user = await auth_controller.login(email=login_user_request.email, password=login_user_request.password)
     await user_controller.update_last_login(email=login_user_request.email)
@@ -39,15 +39,15 @@ async def login_user(
 
 @router.post("/refresh-token")
 async def refresh_token(
-    token: LogoutUserRequest,
+    token: RefreshTokenRequest,
     auth_controller: AuthController = Depends(Factory().get_auth_controller),
 ):
-    return await auth_controller.refresh_token(**token.model_dump())
+    return await auth_controller.refresh_token(token.refresh_token)
 
 
 @router.post("/logout")
 async def logout(
-    token: Token,
+    token: LogoutTokenRequest,
     auth_controller: AuthController = Depends(Factory().get_auth_controller),
 ):
     await auth_controller.logout(token.access_token)

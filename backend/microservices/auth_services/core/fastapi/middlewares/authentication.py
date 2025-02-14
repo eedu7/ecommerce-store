@@ -1,6 +1,7 @@
 from jose import JWTError
 from starlette.authentication import AuthenticationBackend
-from starlette.middleware.authentication import AuthenticationMiddleware as BaseAuthenticationMiddleware
+from starlette.middleware.authentication import \
+    AuthenticationMiddleware as BaseAuthenticationMiddleware
 from starlette.requests import HTTPConnection
 
 from app.schemas.extras.current_user import CurrentUser
