@@ -7,9 +7,12 @@ from api import router
 from core.cache import Cache, CustomKeyMaker, RedisBackend
 from core.exceptions import CustomException
 from core.fastapi.dependencies import Logging
-from core.fastapi.middlewares import (AuthBackend, AuthenticationMiddleware,
-                                      ResponseLoggerMiddleware,
-                                      SQLAlchemyMiddleware)
+from core.fastapi.middlewares import (
+    AuthBackend,
+    AuthenticationMiddleware,
+    ResponseLoggerMiddleware,
+    SQLAlchemyMiddleware,
+)
 
 
 def on_auth_error(request: Request, exc: Exception):

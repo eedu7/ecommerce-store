@@ -24,6 +24,8 @@ class Config(BaseConfig):
     REDIS_URL: str
     CELERY_BROKER_URL: str
     CELERY_BACKEND_URL: str
+    GOOGLE_CLIENT_ID: str
+    GOOGLE_CLIENT_SECRET: str
 
 
 config: Config = Config()
