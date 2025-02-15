@@ -1,5 +1,4 @@
 from datetime import UTC, datetime
-from uuid import UUID
 
 from pydantic import EmailStr
 
@@ -10,8 +9,7 @@ from core.cache import Cache
 from core.config import config
 from core.controller import BaseController
 from core.database import Propagation, Transactional
-from core.exceptions import (BadRequestException, NotFoundException,
-                             UnauthorizedException)
+from core.exceptions import BadRequestException, UnauthorizedException
 from core.security import JWTHandler, PasswordHandler
 
 
@@ -83,8 +81,6 @@ class AuthController(BaseController[User]):
     async def update_password(
         self, user: User, current_password: str, new_password: str
     ):
-        from icecream import ic
-
         if not PasswordHandler.verify(user.password, current_password):
             raise BadRequestException("Current password is incorrect.")
         try:

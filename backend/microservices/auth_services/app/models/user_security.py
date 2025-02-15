@@ -16,8 +16,6 @@ class UserSecurity(Base, TimeStampMixin):
     email_verification_token: Mapped[str] = mapped_column(Unicode(255), nullable=True)
     reset_token: Mapped[str] = mapped_column(Unicode(255), nullable=True)
     reset_token_expiry: Mapped[DateTime] = mapped_column(DateTime, nullable=True)
-    mfa_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
-    mfa_secret: Mapped[str] = mapped_column(Unicode(255), nullable=True)
 
     def __repr__(self):
         return f"id={self.id}, user_uuid={self.user_uuid}, email_verified={self.email_verified}"

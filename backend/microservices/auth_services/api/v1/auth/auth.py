@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 
@@ -9,7 +7,7 @@ from app.schemas.extras.token import LogoutTokenRequest, RefreshTokenRequest
 from app.schemas.requests.users import (ChangePasswordRequest,
                                         LoginUserRequest, RegisterUserRequest)
 from app.schemas.responses.users import AuthUserResponse
-from core.exceptions import BadRequestException, NotFoundException
+from core.exceptions import BadRequestException
 from core.factory import Factory
 from core.fastapi.dependencies import AuthenticationRequired, get_current_user
 from core.utils import api_response
@@ -77,12 +75,12 @@ async def change_password(
         return JSONResponse(
             status_code=200, content={"message": "Password changed successfull"}
         )
-    # raise BadRequestException("Error in changing password")
+    raise BadRequestException("Error in changing password")
 
 
-@router.post("/forgot-password")
+@router.get("/forgot-password")
 async def forgot_password():
-    return api_response("Initiate password reset process.")
+    return api_response("Forget password api endpoint")
 
 
 @router.post("/reset-password")
