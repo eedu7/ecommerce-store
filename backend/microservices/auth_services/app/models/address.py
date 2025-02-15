@@ -12,9 +12,13 @@ class Address(Base, TimeStampMixin, UserAuditMixin):
     __tablename__ = "address"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    uuid: Mapped[UUID] = mapped_column(UUID(as_uuid=True), nullable=False, default=uuid4)
+    uuid: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, default=uuid4
+    )
 
-    user_uuid: Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False)
+    user_uuid: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False
+    )
     street_address: Mapped[str] = mapped_column(Unicode(255), nullable=False)
     city: Mapped[str] = mapped_column(Unicode(100), nullable=False)
     state: Mapped[str] = mapped_column(Unicode(100), nullable=False)

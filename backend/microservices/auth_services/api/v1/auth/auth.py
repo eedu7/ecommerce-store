@@ -21,7 +21,9 @@ async def register_user(
         password=register_user_request.password,
         username=register_user_request.username,
     )
-    token, user = await auth_controller.login(user.email, user.password, verify_password=False)
+    token, user = await auth_controller.login(
+        user.email, user.password, verify_password=False
+    )
     response = {"token": token, "user": user}
     return response
 
@@ -32,7 +34,9 @@ async def login_user(
     auth_controller: AuthController = Depends(Factory().get_auth_controller),
     user_controller: UserController = Depends(Factory().get_user_controller),
 ) -> AuthUserResponse:
-    jwt_token, user = await auth_controller.login(email=login_user_request.email, password=login_user_request.password)
+    jwt_token, user = await auth_controller.login(
+        email=login_user_request.email, password=login_user_request.password
+    )
     await user_controller.update_last_login(email=login_user_request.email)
     return {"token": jwt_token, "user": user}
 

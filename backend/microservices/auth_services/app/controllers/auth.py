@@ -1,4 +1,5 @@
 from datetime import UTC, datetime
+from uuid import UUID
 
 from pydantic import EmailStr
 
@@ -9,7 +10,8 @@ from core.cache import Cache
 from core.config import config
 from core.controller import BaseController
 from core.database import Propagation, Transactional
-from core.exceptions import BadRequestException, UnauthorizedException
+from core.exceptions import (BadRequestException, NotFoundException,
+                             UnauthorizedException)
 from core.security import JWTHandler, PasswordHandler
 
 
@@ -34,14 +36,18 @@ class AuthController(BaseController[User]):
 
         password = PasswordHandler.hash(password)
 
-        return await self.user_repository.create({
-            "email": email,
-            "password": password,
-            "username": username,
-            "last_login_at": datetime.now(),
-        })
+        return await self.user_repository.create(
+            {
+                "email": email,
+                "password": password,
+                "username": username,
+                "last_login_at": datetime.now(),
+            }
+        )
 
-    async def login(self, email: EmailStr, password: str, verify_password: bool = True) -> tuple[Token, User]:
+    async def login(
+        self, email: EmailStr, password: str, verify_password: bool = True
+    ) -> tuple[Token, User]:
         user = await self.user_repository.get_by_email(email)
 
         if not user:
@@ -72,6 +78,9 @@ class AuthController(BaseController[User]):
         cache_key = f"blacklist::{jti}"
 
         await Cache.backend.set("1", cache_key, ttl=ttl)
+
+    async def update_password(self, email: str, new_password: str):
+        pass
 
     async def refresh_token(self, refresh_token: str) -> Token:
         refresh_token = JWTHandler.decode(refresh_token)

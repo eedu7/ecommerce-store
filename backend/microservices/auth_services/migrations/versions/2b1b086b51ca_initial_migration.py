@@ -73,7 +73,9 @@ def upgrade() -> None:
         sa.Column("country", sa.Unicode(length=100), nullable=False),
         sa.Column(
             "address_type",
-            sa.Enum("BILLING", "SHIPPING", "HOME", "WORK", "WAREHOUSE", name="addresstype"),
+            sa.Enum(
+                "BILLING", "SHIPPING", "HOME", "WORK", "WAREHOUSE", name="addresstype"
+            ),
             nullable=False,
         ),
         sa.Column("created_at", sa.DateTime(), nullable=False),

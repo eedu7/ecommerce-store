@@ -28,7 +28,9 @@ class UserController(BaseController[User]):
         :return: List of active users.
         """
         filters = {"deleted_at": None, "deleted_by": None}
-        return await self.user_repository.get_all(skip=skip, limit=limit, filters=filters)
+        return await self.user_repository.get_all(
+            skip=skip, limit=limit, filters=filters
+        )
 
     @Transactional(propagation=Propagation.REQUIRED)
     async def update_last_login(self, email: str) -> None:
@@ -73,6 +75,10 @@ class UserController(BaseController[User]):
         if not user:
             raise NotFoundException("User not found")
         await self.user_repository.update_user(
-            user, {"deleted_at": datetime.now(timezone.utc).replace(tzinfo=None), "deleted_by": user.id}
+            user,
+            {
+                "deleted_at": datetime.now(timezone.utc).replace(tzinfo=None),
+                "deleted_by": user.id,
+            },
         )
         return True

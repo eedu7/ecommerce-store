@@ -20,7 +20,9 @@ class CacheManager:
                 if not self.backend or not self.key_maker:
                     raise ValueError("Backend or KeyMaker not initialized")
 
-                key = await self.key_maker.make(func=func, prefix=prefix if prefix else tag.value)
+                key = await self.key_maker.make(
+                    func=func, prefix=prefix if prefix else tag.value
+                )
                 cached_response = await self.backend.get(key=key)
 
                 if cached_response:

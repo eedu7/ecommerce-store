@@ -27,7 +27,9 @@ class JWTHandler:
         expire = datetime.now(UTC) + timedelta(expire_minutes)
         jti = str(uuid4())
         payload.update({"exp": expire, "jti": jti, "iat": datetime.now(UTC)})
-        return jwt.encode(payload, JWTHandler.secret_key, algorithm=JWTHandler.algorithm)
+        return jwt.encode(
+            payload, JWTHandler.secret_key, algorithm=JWTHandler.algorithm
+        )
 
     @staticmethod
     def decode(token: str) -> dict:
