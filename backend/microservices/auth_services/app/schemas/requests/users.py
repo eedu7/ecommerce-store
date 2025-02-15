@@ -64,3 +64,8 @@ class EditUserRequest(BaseModel):
         examples=[GenderType.FEMALE, GenderType.MALE, GenderType.OTHER],
     )
     date_of_birth: date | None = Field(None, examples=["2000-01-01"])
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str

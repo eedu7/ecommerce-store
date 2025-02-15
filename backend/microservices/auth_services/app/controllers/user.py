@@ -49,7 +49,6 @@ class UserController(BaseController[User]):
                 {
                     **data,
                     "updated_by": user.id,
-                    "updated_at": datetime.now(timezone.utc).replace(tzinfo=None),
                 },
             )
             return True

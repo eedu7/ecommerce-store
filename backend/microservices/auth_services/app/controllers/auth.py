@@ -79,8 +79,22 @@ class AuthController(BaseController[User]):
 
         await Cache.backend.set("1", cache_key, ttl=ttl)
 
-    async def update_password(self, email: str, new_password: str):
-        pass
+    @Transactional(propagation=Propagation.REQUIRED)
+    async def update_password(
+        self, user: User, current_password: str, new_password: str
+    ):
+        from icecream import ic
+
+        if not PasswordHandler.verify(user.password, current_password):
+            raise BadRequestException("Current password is incorrect.")
+        try:
+            await self.user_repository.update_user(
+                user,
+                {"password": PasswordHandler.hash(new_password), "updated_by": User.id},
+            )
+            return True
+        except Exception as e:
+            raise BadRequestException(str(e))
 
     async def refresh_token(self, refresh_token: str) -> Token:
         refresh_token = JWTHandler.decode(refresh_token)

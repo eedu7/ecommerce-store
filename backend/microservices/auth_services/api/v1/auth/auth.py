@@ -1,11 +1,17 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 
 from app.controllers import AuthController, UserController
+from app.models import User
 from app.schemas.extras.token import LogoutTokenRequest, RefreshTokenRequest
-from app.schemas.requests.users import LoginUserRequest, RegisterUserRequest
+from app.schemas.requests.users import (ChangePasswordRequest,
+                                        LoginUserRequest, RegisterUserRequest)
 from app.schemas.responses.users import AuthUserResponse
+from core.exceptions import BadRequestException, NotFoundException
 from core.factory import Factory
+from core.fastapi.dependencies import AuthenticationRequired, get_current_user
 from core.utils import api_response
 
 router = APIRouter()
@@ -58,9 +64,20 @@ async def logout(
     return JSONResponse(status_code=200, content={"message": "Successfully logged out"})
 
 
-@router.post("/change-password")
-async def change_password():
-    return api_response("Allow users to change their password.")
+@router.post("/change-password", dependencies=[Depends(AuthenticationRequired)])
+async def change_password(
+    password: ChangePasswordRequest,
+    user: User = Depends(get_current_user),
+    auth_controller: AuthController = Depends(Factory().get_auth_controller),
+):
+    updated = await auth_controller.update_password(
+        user, password.current_password, password.new_password
+    )
+    if updated:
+        return JSONResponse(
+            status_code=200, content={"message": "Password changed successfull"}
+        )
+    # raise BadRequestException("Error in changing password")
 
 
 @router.post("/forgot-password")
