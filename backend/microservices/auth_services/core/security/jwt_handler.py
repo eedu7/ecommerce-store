@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from http import HTTPStatus
 from uuid import uuid4
 
@@ -24,9 +24,9 @@ class JWTHandler:
 
     @staticmethod
     def encode(payload: dict, expire_minutes: int = 60) -> str:
-        expire = datetime.utcnow() + timedelta(expire_minutes)
+        expire = datetime.now(UTC) + timedelta(expire_minutes)
         jti = str(uuid4())
-        payload.update({"exp": expire, "jti": jti, "iat": datetime.utcnow()})
+        payload.update({"exp": expire, "jti": jti, "iat": datetime.now(UTC)})
         return jwt.encode(
             payload, JWTHandler.secret_key, algorithm=JWTHandler.algorithm
         )

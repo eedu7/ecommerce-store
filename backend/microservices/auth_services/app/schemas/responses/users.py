@@ -1,5 +1,3 @@
-from datetime import date
-
 from pydantic import UUID4, BaseModel, Field
 
 from app.schemas.extras.token import Token
@@ -15,6 +13,6 @@ class UserResponse(BaseModel):
         form_attributes = True
 
 
-class RegisterUserResponse(BaseModel):
+class AuthUserResponse(BaseModel):
     token: Token
     user: UserResponse

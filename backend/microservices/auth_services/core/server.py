@@ -1,5 +1,3 @@
-from typing import List
-
 from fastapi import Depends, FastAPI, Request
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
@@ -68,7 +66,7 @@ def init_listeners(app_: FastAPI) -> None:
     app_.add_exception_handler(Exception, global_custom_exception)
 
 
-def make_middleware() -> List[Middleware]:
+def make_middleware() -> list[Middleware]:
     middleware = [
         Middleware(
             CORSMiddleware,

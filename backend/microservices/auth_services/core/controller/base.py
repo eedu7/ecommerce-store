@@ -1,4 +1,4 @@
-from typing import Any, Generic, Type, TypeVar
+from typing import Any, Generic, TypeVar
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -13,7 +13,7 @@ ModelType = TypeVar("ModelType", bound=Base)
 class BaseController(Generic[ModelType]):
     """Base class for data controllers."""
 
-    def __init__(self, model: Type[ModelType], repository: BaseRepository):
+    def __init__(self, model: type[ModelType], repository: BaseRepository):
         self.model_class = model
         self.repository = repository
 

@@ -1,5 +1,5 @@
 from functools import reduce
-from typing import Any, Generic, Type, TypeVar
+from typing import Any, Generic, TypeVar
 
 from sqlalchemy import Select, func
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,9 +13,9 @@ ModelType = TypeVar("ModelType", bound=Base)
 class BaseRepository(Generic[ModelType]):
     """Base class for data repositories."""
 
-    def __init__(self, model: Type[ModelType], db_session: AsyncSession):
+    def __init__(self, model: type[ModelType], db_session: AsyncSession):
         self.session = db_session
-        self.model_class: Type[ModelType] = model
+        self.model_class: type[ModelType] = model
 
     async def create(self, attributes: dict[str, Any] = None) -> ModelType:
         """
@@ -164,7 +164,7 @@ class BaseRepository(Generic[ModelType]):
         query: Select,
         sort_by: str,
         order: str | None = "asc",
-        model: Type[ModelType] | None = None,
+        model: type[ModelType] | None = None,
         case_insensitive: bool = False,
     ) -> Select:
         """

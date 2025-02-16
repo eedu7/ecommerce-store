@@ -1,5 +1,5 @@
-from datetime import datetime
-from typing import Any, Dict, List
+from datetime import datetime, timezone
+from typing import Any
 from uuid import UUID
 
 from app.models import User
@@ -20,7 +20,7 @@ class UserController(BaseController[User]):
     async def get_by_email(self, email: str) -> User:
         return await self.user_repository.get_by_email(email)
 
-    async def get_all_users(self, skip: int = 0, limit: int = 100) -> List[User]:
+    async def get_all_users(self, skip: int = 0, limit: int = 100) -> list[User]:
         """
         Returns a list of users
         :param skip: Number of records to skip (for pagination).
@@ -37,11 +37,11 @@ class UserController(BaseController[User]):
         user = await self.get_by_email(email)
         if user:
             await self.user_repository.update_user(
-                user, {"last_login_at": datetime.utcnow()}
+                user, {"last_login_at": datetime.now(timezone.utc).replace(tzinfo=None)}
             )
 
     @Transactional(propagation=Propagation.REQUIRED)
-    async def update_user(self, user_uuid: UUID, data: Dict[str, Any]) -> bool:
+    async def update_user(self, user_uuid: UUID, data: dict[str, Any]) -> bool:
         user = await self.get_by_uuid(user_uuid)
         if user:
             await self.user_repository.update_user(
@@ -49,7 +49,6 @@ class UserController(BaseController[User]):
                 {
                     **data,
                     "updated_by": user.id,
-                    "updated_at": datetime.utcnow(),
                 },
             )
             return True
@@ -75,6 +74,10 @@ class UserController(BaseController[User]):
         if not user:
             raise NotFoundException("User not found")
         await self.user_repository.update_user(
-            user, {"deleted_at": datetime.utcnow(), "deleted_by": user.id}
+            user,
+            {
+                "deleted_at": datetime.now(timezone.utc).replace(tzinfo=None),
+                "deleted_by": user.id,
+            },
         )
         return True

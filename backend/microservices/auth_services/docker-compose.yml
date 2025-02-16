@@ -34,6 +34,13 @@ services:
     restart: always
     volumes:
       - redis_data:/data
+  rabbitmq:
+    image: rabbitmq:latest
+    ports:
+      - "5672:5672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=rabbit
+      - RABBITMQ_DEFAULT_PASS=password
 
   pgadmin:
     image: dpage/pgadmin4:latest

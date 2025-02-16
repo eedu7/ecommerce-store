@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 
 from pydantic import EmailStr
 
@@ -45,7 +45,7 @@ class AuthController(BaseController[User]):
 
     async def login(
         self, email: EmailStr, password: str, verify_password: bool = True
-    ) -> Token:
+    ) -> tuple[Token, User]:
         user = await self.user_repository.get_by_email(email)
 
         if not user:
@@ -60,31 +60,53 @@ class AuthController(BaseController[User]):
                 expire_minutes=config.JWT_ACCESS_TOKEN_EXPIRE_MINUTES,
             ),
             refresh_token=JWTHandler.encode(
-                payload={"sub": "refresh_token"},
+                payload={"sub": "refresh_token", "user_id": user.id},
                 expire_minutes=config.JWT_REFRESH_TOKEN_EXPIRE_DAYS_IN_MINUTES,
             ),
-        )
+            expires_in=config.JWT_ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        ), user
 
     async def logout(self, access_token: str):
         payload = JWTHandler.decode(access_token)
+
         jti, exp = payload.get("jti", None), payload.get("exp", None)
-        ttl = exp - int(datetime.utcnow().timestamp())
+
+        ttl = exp - int(datetime.now(UTC).timestamp())
+
         cache_key = f"blacklist::{jti}"
+
         await Cache.backend.set("1", cache_key, ttl=ttl)
 
-    async def refresh_token(self, access_token: str, refresh_token: str) -> Token:
-        token = JWTHandler.decode(access_token)
+    @Transactional(propagation=Propagation.REQUIRED)
+    async def update_password(
+        self, user: User, current_password: str, new_password: str
+    ):
+        if not PasswordHandler.verify(user.password, current_password):
+            raise BadRequestException("Current password is incorrect.")
+        try:
+            await self.user_repository.update_user(
+                user,
+                {"password": PasswordHandler.hash(new_password), "updated_by": User.id},
+            )
+            return True
+        except Exception as e:
+            raise BadRequestException(str(e))
+
+    async def refresh_token(self, refresh_token: str) -> Token:
         refresh_token = JWTHandler.decode(refresh_token)
         if refresh_token.get("sub") != "refresh_token":
             raise UnauthorizedException("Invalid refresh token")
 
+        user_id = refresh_token.get("user_id", None)
+
         return Token(
             access_token=JWTHandler.encode(
-                payload={"user_id": token.get("user_id")},
+                payload={"user_id": user_id},
                 expire_minutes=config.JWT_ACCESS_TOKEN_EXPIRE_MINUTES,
             ),
             refresh_token=JWTHandler.encode(
-                payload={"sub": "refresh_token"},
+                payload={"sub": "refresh_token", "user_id": user_id},
                 expire_minutes=config.JWT_REFRESH_TOKEN_EXPIRE_DAYS_IN_MINUTES,
             ),
+            expires_in=config.JWT_ACCESS_TOKEN_EXPIRE_MINUTES * 60,
         )

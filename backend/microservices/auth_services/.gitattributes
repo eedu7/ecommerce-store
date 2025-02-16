@@ -1,0 +1,3 @@
+# Set the ending LF (unix) for all files
+# Auto detect text files and perform LF normalization
+* text=auto

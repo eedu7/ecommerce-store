@@ -14,10 +14,6 @@ class LoginUserRequest(BaseModel):
     password: str = Field(..., min_length=8, max_length=64, examples=["Password@123"])
 
 
-class LogoutUserRequest(BaseModel):
-    access_token: str
-
-
 class RegisterUserRequest(BaseModel):
     email: EmailStr = Field(..., examples=["john.doe@example.com"])
     password: str = Field(..., min_length=8, max_length=64, examples=["Password@123"])
@@ -68,3 +64,8 @@ class EditUserRequest(BaseModel):
         examples=[GenderType.FEMALE, GenderType.MALE, GenderType.OTHER],
     )
     date_of_birth: date | None = Field(None, examples=["2000-01-01"])
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str

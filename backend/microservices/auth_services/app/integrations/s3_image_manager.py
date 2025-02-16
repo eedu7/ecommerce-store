@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 import boto3
 from botocore.exceptions import NoCredentialsError
@@ -33,7 +33,7 @@ class S3ImageManager:
 
     @staticmethod
     def construct_file_name(file_name: str) -> str:
-        timestamp = datetime.utcnow().strftime("%Y%m%d%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
         return f"{timestamp}_{file_name}"
 
     @staticmethod

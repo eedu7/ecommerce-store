@@ -37,7 +37,7 @@ async def get_users(
             profile_image_url = await S3ImageManager.get_presigned_url(
                 user.profile_image_url
             )
-            setattr(user, "profile_image_url", profile_image_url)
+            user.profile_image_url = profile_image_url
     await Cache.backend.set(users, cache_key, ttl=60)
     return users
 
@@ -51,7 +51,7 @@ async def get_user(
         profile_image_url = await S3ImageManager.get_presigned_url(
             user.profile_image_url
         )
-        setattr(user, "profile_image_url", profile_image_url)
+        user.profile_image_url = profile_image_url
     return user
 
 
@@ -87,7 +87,9 @@ async def update_user_profile(
     data = user_data.model_dump()
     updated = await user_controller.update_user(uuid, data)
     if updated:
-        raise JSONResponse(status_code=200, content={"message": "User profile updated"})
+        return JSONResponse(
+            status_code=200, content={"message": "User profile updated"}
+        )
     raise BadRequestException("Error updating user profile")
 
 
@@ -95,6 +97,7 @@ async def update_user_profile(
 async def delete_user(
     uuid: UUID, user_controller: UserController = Depends(Factory().get_user_controller)
 ):
+    # TODO: Invalidate the token
     deleted = await user_controller.delete_user(uuid)
     if deleted:
         return JSONResponse(status_code=200, content={"message": "User deleted"})

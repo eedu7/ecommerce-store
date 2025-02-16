@@ -1,5 +1,5 @@
-from datetime import datetime
-from typing import Any, Dict
+from datetime import UTC, datetime
+from typing import Any
 
 from app.models import User
 from core.repository import BaseRepository
@@ -53,10 +53,10 @@ class UserRepository(BaseRepository[User]):
         :param user: The user instance.
         :return: None.
         """
-        user.last_login_at = datetime.utcnow()
+        user.last_login_at = datetime.now(UTC)
         self.session.add(user)
 
-    async def update_user(self, user: User, attributes: Dict[str, Any]) -> User:
+    async def update_user(self, user: User, attributes: dict[str, Any]) -> User:
         """
         Update user details.
 
